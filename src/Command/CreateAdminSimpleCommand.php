@@ -46,6 +46,7 @@ class CreateAdminSimpleCommand extends Command
         $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
         $user->setIsActive(true);
+        $user->setIsVerified(true);
 
         $this->em->persist($user);
         $this->em->flush();

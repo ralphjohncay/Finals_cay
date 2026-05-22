@@ -65,6 +65,7 @@ class AdminUserController extends AbstractController
             // Hash password
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
+            $user->setIsVerified(true);
 
             try {
                 $em->persist($user);

@@ -3,6 +3,16 @@ set -e
 
 cd /app
 
+if [ -z "$APP_SECRET" ]; then
+  echo "ERROR: APP_SECRET is not set. Add it in Railway → Finals_cay → Variables."
+  exit 1
+fi
+
+if [ -z "$DATABASE_URL" ]; then
+  echo "ERROR: DATABASE_URL is not set. Use DATABASE_URL=\${{MySQL.DATABASE_URL}} in Railway."
+  exit 1
+fi
+
 mkdir -p var/cache var/log var/sessions public/uploads/products config/jwt
 chmod -R 777 var public/uploads config/jwt 2>/dev/null || true
 

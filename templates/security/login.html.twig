@@ -309,16 +309,17 @@
             {% if error %}
                 <div class="alert alert-danger">
                     <i class="bi bi-exclamation-triangle"></i>
-                    {% set message = error.messageKey|trans(error.messageData, 'security') %}
                     {% if error.messageKey == 'Invalid credentials.' %}
-                        Invalid email or password. Please try again.
+                        Invalid email or password. If you created this account locally, it is not on Railway until you register again or reset the password in production.
+                    {% elseif error.messageKey == 'Invalid CSRF token.' %}
+                        Your session expired or the security token is invalid. Refresh this page and try again. On Railway, ensure APP_SECRET is set and does not change between deploys.
                     {% else %}
-                        {{ message }}
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
                     {% endif %}
                 </div>
             {% endif %}
 
-            <form method="post">
+            <form method="post" action="{{ path('login') }}">
                 <div class="form-group">
                     <label for="inputEmail">
                         <i class="bi bi-envelope"></i> Email Address
