@@ -3,8 +3,8 @@ set -e
 
 cd /app
 
-mkdir -p var/cache var/log public/uploads/products
-chmod -R 775 var public/uploads 2>/dev/null || true
+mkdir -p var/cache var/log var/sessions public/uploads/products config/jwt
+chmod -R 777 var public/uploads config/jwt 2>/dev/null || true
 
 if [ ! -f config/jwt/private.pem ]; then
   echo "Generating JWT key pair..."
