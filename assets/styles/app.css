@@ -1,0 +1,346 @@
+body {
+ margin: 0;
+ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+ color: #111827;
+ background: #f9fafb;
+}
+
+.sidebar {
+ position: fixed;
+ top: 0;
+ left: 0;
+ height: 100vh;
+ width: 240px;
+ background: #111827;
+ color: #e5e7eb;
+ display: flex;
+ flex-direction: column;
+ padding: 20px 16px;
+ box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+ margin-bottom: 24px;
+}
+
+.sidebar-header h1 {
+ font-size: 20px;
+ margin: 0 0 4px;
+ color: #ffffff;
+}
+
+.sidebar-header p {
+ margin: 0;
+ font-size: 12px;
+ color: #9ca3af;
+}
+
+.sidebar-nav {
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+}
+
+.sidebar-nav a {
+ text-decoration: none;
+ color: #e5e7eb;
+ padding: 10px 12px;
+ border-radius: 8px;
+ transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-nav a:hover {
+ background: #1f2937;
+ color: #ffffff;
+}
+
+.sidebar-nav a.active {
+ background: #2563eb;
+ color: #ffffff;
+}
+
+.main {
+ margin-left: 240px;
+ min-height: 100vh;
+ display: flex;
+ flex-direction: column;
+}
+
+.navbar {
+ background: #ffffff;
+ border-bottom: 1px solid #e5e7eb;
+ padding: 16px 24px;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ position: sticky;
+ top: 0;
+ z-index: 10;
+}
+
+.content {
+ padding: 24px;
+}
+
+.user-profile {
+ display: flex;
+ align-items: center;
+ gap: 8px;
+}
+
+.user-avatar {
+ width: 32px;
+ height: 32px;
+ border-radius: 50%;
+ background: #2563eb;
+ color: #fff;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-weight: 600;
+}
+
+.btn {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ gap: 6px;
+ padding: 8px 12px;
+ border-radius: 8px;
+ text-decoration: none;
+ font-size: 14px;
+ cursor: pointer;
+ border: none;
+}
+
+.btn-primary { background: #2563eb; color: #fff; }
+.btn-primary:hover { background: #1e40af; }
+
+.btn-secondary { background: #e5e7eb; color: #111827; }
+.btn-secondary:hover { background: #d1d5db; }
+
+.btn-view { background: #10b981; color: #fff; }
+.btn-view:hover { background: #059669; }
+
+.btn-edit { background: #f59e0b; color: #111827; }
+.btn-edit:hover { background: #d97706; color: #111827; }
+
+.btn-delete { background: #ef4444; color: #fff; }
+.btn-delete:hover { background: #dc2626; }
+
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 12px 14px; border-bottom: 1px solid #e5e7eb; }
+.table thead th { background: #f3f4f6; text-align: left; }
+
+@media (max-width: 960px) {
+ .sidebar { width: 200px; }
+ .main { margin-left: 200px; }
+}
+
+@media (max-width: 720px) {
+ .sidebar { position: static; width: 100%; height: auto; flex-direction: row; align-items: center; }
+ .main { margin-left: 0; }
+ .sidebar-nav { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+}
+
+/* =============================
+   DataTables - Professional Theme
+   ============================= */
+/* Card-like container */
+.dataTables_wrapper {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  padding: 12px 12px 8px;
+}
+
+/* Header controls (length + search) */
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+  font-size: 13px;
+  color: #374151;
+}
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+  height: 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 6px 10px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* Table header */
+table.dataTable thead th {
+  background: linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%);
+  color: #111827;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+table.dataTable thead th.sorting,
+table.dataTable thead th.sorting_asc,
+table.dataTable thead th.sorting_desc {
+  background-clip: padding-box;
+}
+
+/* Table body */
+table.dataTable tbody tr {
+  transition: background-color .15s ease-in-out;
+}
+table.dataTable tbody tr:hover {
+  background-color: #f9fafb;
+}
+table.dataTable tbody td {
+  vertical-align: middle;
+}
+
+/* Info and pagination footer */
+.dataTables_wrapper .dataTables_info {
+  color: #6b7280;
+  font-size: 12px;
+}
+.dataTables_wrapper .dataTables_paginate {
+  padding-top: 8px;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  margin: 0 3px !important;
+  color: #374151 !important;
+  background: #ffffff !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  border-color: #c7cdd6 !important;
+  background: #f9fafb !important;
+  color: #111827 !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+/* Length + filter spacing for BS5 grid alignment */
+.dataTables_wrapper .row:first-child {
+  margin-bottom: 6px;
+}
+
+/* Responsive control icon color tweaks */
+table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before,
+table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
+  background-color: #2563eb;
+  box-shadow: 0 0 0 2px #ffffff inset;
+}
+
+/* =============================
+   Global Theme Enhancements
+   ============================= */
+:root {
+  --bg: #f7f8fb;
+  --panel: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --primary: #2563eb;
+  --primary-600: #1e40af;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --shadow: 0 6px 18px rgba(0,0,0,0.06);
+  --radius: 12px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+h1, h2, h3, h4, h5, h6 { color: var(--text); letter-spacing: .2px; }
+h1 { font-size: 28px; margin: 0; }
+h2 { font-size: 20px; }
+
+/* Panels / cards */
+.panel, .card, .section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Buttons */
+.btn { transition: background .2s, color .2s, box-shadow .2s, transform .02s; }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-600); }
+.btn-secondary { background: #eef2f7; color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: #e5eaf1; }
+.btn-info { background: #38bdf8; color:#0c4a6e; }
+.btn-warning { background: var(--warning); color: #111827; }
+.btn-danger { background: var(--danger); color:#fff; }
+.btn-success { background: var(--success); color:#fff; }
+
+/* Forms */
+input[type="text"], input[type="email"], input[type="number"], input[type="password"],
+select, textarea {
+  width: 100%;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 12px;
+  outline: none;
+  background: #fff;
+  transition: border-color .2s, box-shadow .2s;
+}
+textarea { min-height: 100px; }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+}
+
+label { color: var(--muted); font-size: 13px; }
+
+/* Tables */
+.table thead th { font-weight: 600; }
+.table-striped tbody tr:nth-of-type(odd) { background: #fafbfe; }
+.table-hover tbody tr:hover { background: #f5f7fd; }
+
+/* Utilities */
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+.gap-sm { gap: 8px; } .gap-lg { gap: 24px; }
+.mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; } .mt-4 { margin-top: 16px; }
+.mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 12px; } .mb-4 { margin-bottom: 16px; }
+.p-3 { padding: 12px; } .p-4 { padding: 16px; } .p-6 { padding: 24px; }
+
+/* Links */
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Layout container for aligning content with sidebar */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+
+/* Table cell utilities for DataTables */
+.dt-desc {
+  white-space: normal !important;
+  word-break: break-word;
+}
+.dt-nowrap {
+  white-space: nowrap !important;
+}

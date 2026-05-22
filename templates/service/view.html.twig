@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}View Service{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>{{ service.name }}</h2>
+    <table class="table table-striped table-bordered">
+        <tbody>
+            <tr>
+                <th>Description</th>
+                <td>{{ service.description }}</td>
+            </tr>
+            <tr>
+                <th>Price</th>
+                <td>${{ service.price }}</td>
+            </tr>
+            <tr>
+                <th>Category</th>
+                <td>{{ service.category }}</td>
+            </tr>
+            <tr>
+                <th>Active</th>
+                <td>{{ service.isActive ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="{{ path('app_service_index') }}" class="btn btn-secondary">Back to Services</a>
+</section>
+{% endblock %}

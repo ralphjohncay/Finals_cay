@@ -1,0 +1,366 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add New Product{% endblock %}
+
+{% block page_title %}Products{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('form') }}
+    <style>
+        .product-form-container {
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+
+        .product-form-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .product-form-header {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+        }
+
+        .product-form-header h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .product-form-content {
+            padding: 2.5rem;
+        }
+
+        .product-form-section {
+            margin-bottom: 2rem;
+        }
+
+        .product-form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .product-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .product-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .product-form-header {
+                padding: 1.5rem;
+            }
+            .product-form-content {
+                padding: 1.5rem;
+            }
+        }
+
+        .product-form-group {
+            margin-bottom: 2rem;
+        }
+
+        .product-form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2b2b2b;
+            font-size: 0.95rem;
+        }
+
+        .product-form-group input[type="text"],
+        .product-form-group input[type="number"],
+        .product-form-group input[type="file"],
+        .product-form-group select,
+        .product-form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            font-family: inherit;
+        }
+
+        .product-form-group input[type="file"] {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        .product-form-group input:focus,
+        .product-form-group select:focus,
+        .product-form-group textarea:focus {
+            outline: none;
+            border-color: #8f5644;
+            box-shadow: 0 0 0 3px rgba(105, 62, 48, 0.15);
+        }
+
+        .product-form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .price-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .price-input-wrapper::before {
+            content: '₱';
+            position: absolute;
+            left: 1rem;
+            color: #666;
+            font-weight: 600;
+            font-size: 1rem;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .price-input-wrapper input[type="text"],
+        .price-input-wrapper input[type="number"] {
+            padding-left: 2rem !important;
+            width: 100% !important;
+        }
+
+        .product-form-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .product-form-error ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .product-form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .product-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .product-btn-primary {
+            background-color: #8f5644;
+            color: white;
+        }
+
+        .product-btn-primary:hover {
+            background-color: #3f2a24;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .product-btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .product-btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="product-form-container">
+    <div class="product-form-card">
+        <div class="product-form-header">
+            <h2>
+                <i class="bi bi-plus-circle"></i> Add New Product
+            </h2>
+        </div>
+
+        <div class="product-form-content">
+            {% if form.vars.submitted and not form.vars.valid %}
+                <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #f5c6cb;">
+                    <strong>Please fix the following errors:</strong>
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            {{ form_start(form, { 'attr': { 'novalidate': 'novalidate', 'enctype': 'multipart/form-data' } }) }}
+                <div class="product-form-section">
+                    <div class="product-form-grid">
+                        <div class="product-form-group">
+                            {{ form_label(form.name) }}
+                            {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
+                            {% if form.name.vars.errors|length > 0 %}
+                                <div class="product-form-error">
+                                    {% for error in form.name.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="product-form-group">
+                            {{ form_label(form.price) }}
+                            <div class="price-input-wrapper">
+                            {{ form_widget(form.price, { 'attr': {'class': 'form-control'} }) }}
+                            </div>
+                            {% if form.price.vars.errors|length > 0 %}
+                                <div class="product-form-error">
+                                    {% for error in form.price.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="product-form-group">
+                            {{ form_label(form.stock) }}
+                            {{ form_widget(form.stock, { 'attr': {'class': 'form-control'} }) }}
+                            {% if form.stock.vars.errors|length > 0 %}
+                                <div class="product-form-error">
+                                    {% for error in form.stock.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="product-form-group">
+                        {{ form_label(form.category) }}
+                        {{ form_widget(form.category, { 'attr': {'class': 'form-control'} }) }}
+                        {% if form.category.vars.errors|length > 0 %}
+                            <div class="product-form-error">
+                                {% for error in form.category.vars.errors %}
+                                    {{ error.message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="product-form-group">
+                        {{ form_label(form.imageFile) }}
+                        {{ form_widget(form.imageFile, { 'attr': {'class': 'form-control'} }) }}
+                        {% if form.imageFile.vars.errors|length > 0 %}
+                            <div class="product-form-error">
+                                {% for error in form.imageFile.vars.errors %}
+                                    {{ error.message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Upload a file (max 10MB)</small>
+                    </div>
+
+                    <div class="product-form-group">
+                        {{ form_label(form.description) }}
+                        {{ form_widget(form.description, { 'attr': {'class': 'form-control'} }) }}
+                        {% if form.description.vars.errors|length > 0 %}
+                            <div class="product-form-error">
+                                {% for error in form.description.vars.errors %}
+                                    {{ error.message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="product-form-actions">
+                        <button type="submit" class="product-btn product-btn-primary">
+                            <i class="bi bi-check-circle"></i> Save Product
+                        </button>
+                        <a href="{{ path('app_product_index') }}" class="product-btn product-btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceInput = document.querySelector('input[name="products[price]"]');
+            if (priceInput) {
+                // Prevent negative values on input
+                priceInput.addEventListener('input', function(e) {
+                    const value = parseFloat(e.target.value);
+                    if (value < 0) {
+                        e.target.value = '';
+                    }
+                });
+                
+                // Prevent negative values on keydown (for minus key)
+                priceInput.addEventListener('keydown', function(e) {
+                    if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                        e.preventDefault();
+                    }
+                });
+                
+                // Validate on blur
+                priceInput.addEventListener('blur', function(e) {
+                    const value = parseFloat(e.target.value);
+                    if (isNaN(value) || value <= 0) {
+                        e.target.setCustomValidity('Price must be greater than 0');
+                    } else {
+                        e.target.setCustomValidity('');
+                    }
+                });
+            }
+
+            // Stock field validation
+            const stockInput = document.querySelector('input[name="products[stock]"]');
+            if (stockInput) {
+                // Prevent 0 or negative values on input
+                stockInput.addEventListener('input', function(e) {
+                    const value = parseInt(e.target.value);
+                    if (value <= 0) {
+                        e.target.value = '';
+                    }
+                });
+                
+                // Prevent negative values on keydown (for minus key)
+                stockInput.addEventListener('keydown', function(e) {
+                    if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                        e.preventDefault();
+                    }
+                });
+                
+                // Validate on blur
+                stockInput.addEventListener('blur', function(e) {
+                    const value = parseInt(e.target.value);
+                    if (isNaN(value) || value <= 0) {
+                        e.target.setCustomValidity('Stock must be greater than 0');
+                    } else {
+                        e.target.setCustomValidity('');
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

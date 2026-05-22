@@ -1,0 +1,100 @@
+/* Base colors and font */
+:root {
+    --primary: #8f5644;
+    --secondary: #f7f0e8;
+    --accent: #d4b896;
+    --text: #2b2b2b;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--secondary);
+    color: var(--text);
+}
+
+/* Container for the view page */
+.view-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Header */
+.view-container h2 {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+}
+
+/* Field display */
+.view-field {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e0d6d2;
+}
+
+.view-field:last-child {
+    border-bottom: none;
+}
+
+.view-field-label {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.view-field-value {
+    font-weight: 500;
+    color: #555;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+}
+
+.btn-primary:hover {
+    background-color: #3f2a24;
+}
+
+.btn-back {
+    background-color: #6c757d;
+}
+
+.btn-back:hover {
+    background-color: #5a6268;
+}
+
+/* Responsive for small screens */
+@media (max-width: 600px) {
+    .view-container {
+        padding: 1rem;
+    }
+
+    .view-field {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .view-field-value {
+        margin-top: 0.25rem;
+    }
+}

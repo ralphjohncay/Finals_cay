@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RALPHS Footwear</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(145deg, #f0dcc4 0%, #c49a78 22%, #8f5644 55%, #4a2820 88%, #2a1512 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140%;
+            height: 70%;
+            background: radial-gradient(ellipse at center, rgba(255, 230, 200, 0.22) 0%, transparent 55%);
+            pointer-events: none;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 450px;
+            margin: 40px auto;
+        }
+
+        /* Logo sits above the white card on a dark panel so white artwork stays visible */
+        .auth-brand {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.4rem 1.75rem;
+            margin-bottom: 1.35rem;
+            background: linear-gradient(165deg, #2a221c 0%, #161210 55%, #0c0a09 100%);
+            border-radius: 18px;
+            box-shadow:
+                0 12px 36px rgba(0, 0, 0, 0.42),
+                inset 0 1px 0 rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-brand-logo {
+            max-height: 100px;
+            width: auto;
+            max-width: min(280px, 100%);
+            object-fit: contain;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .login-box h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3f2a24;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-box .subtitle {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #3f2a24;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #8f5644;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(105, 62, 48, 0.1);
+        }
+        
+        .password-wrapper {
+            position: relative;
+        }
+        
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+            font-size: 1.2rem;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: color 0.3s ease;
+        }
+        
+        .password-toggle-btn:hover {
+            color: #8f5644;
+        }
+        
+        .password-wrapper input[type="password"],
+        .password-wrapper input[type="text"] {
+            padding-right: 45px;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(105, 62, 48, 0.3);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(105, 62, 48, 0.4);
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            background: #ffffff;
+            color: #3c4043;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            text-decoration: none;
+        }
+
+        .btn-google:hover {
+            border-color: #c7c7c7;
+            background: #f8f9fa;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .alert-danger {
+            background: #fff5f5;
+            color: #c53030;
+            border-color: #fc8181;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .register-link a {
+            color: #8f5644;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .register-link a:hover {
+            color: #3f2a24;
+            text-decoration: underline;
+        }
+        
+        .home-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .home-link a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+        
+        .home-link a:hover {
+            opacity: 1;
+        }
+        
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 2rem 1.5rem;
+            }
+            
+            .login-box h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="auth-brand">
+            <img class="auth-brand-logo" src="{{ asset('image/logomain.png') }}" alt="RALPHS Footwear" width="280" height="100">
+        </div>
+        <div class="login-box">
+            <div class="login-header">
+                <h1>Welcome to RALPHS Footwear</h1>
+                <p class="subtitle">Sign in to your account</p>
+            </div>
+            
+            {% if error %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    {% set message = error.messageKey|trans(error.messageData, 'security') %}
+                    {% if error.messageKey == 'Invalid credentials.' %}
+                        Invalid email or password. Please try again.
+                    {% else %}
+                        {{ message }}
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                <div class="form-group">
+                    <label for="inputEmail">
+                        <i class="bi bi-envelope"></i> Email Address
+                    </label>
+                    <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" autocomplete="email" required autofocus placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="inputPassword">
+                        <i class="bi bi-lock"></i> Password
+                    </label>
+                    <div class="password-wrapper">
+                        <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required placeholder="Enter your password">
+                        <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button class="btn-login" type="submit">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Sign In
+                </button>
+            </form>
+
+            <a class="btn-google" href="{{ path('connect_google_start') }}">
+                <i class="bi bi-google"></i>
+                Continue with Google
+            </a>
+            
+            <div class="register-link">
+                Don't have an account? <a href="{{ path('app_register') }}">Create one here</a>
+            </div>
+            
+            <div class="home-link">
+                <a href="{{ path('app_homepage') }}">
+                    <i class="bi bi-arrow-left"></i> Back to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.password-wrapper').forEach(function(wrapper) {
+                const input = wrapper.querySelector('input');
+                const toggleBtn = wrapper.querySelector('.password-toggle-btn');
+                
+                if (input && toggleBtn) {
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const isPassword = input.type === 'password';
+                        input.type = isPassword ? 'text' : 'password';
+                        
+                        const icon = toggleBtn.querySelector('i');
+                        if (icon) {
+                            if (isPassword) {
+                                icon.classList.remove('bi-eye');
+                                icon.classList.add('bi-eye-slash');
+                            } else {
+                                icon.classList.remove('bi-eye-slash');
+                                icon.classList.add('bi-eye');
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

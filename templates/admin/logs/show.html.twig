@@ -1,0 +1,233 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log Details - Admin{% endblock %}
+
+{% block page_title %}Log Details{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .log-detail-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .log-detail-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .log-detail-header {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .log-detail-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .log-detail-back-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .log-detail-back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .log-detail-content {
+            padding: 2rem;
+        }
+
+        .log-detail-row {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid #eee;
+            gap: 1rem;
+        }
+
+        .log-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .log-detail-label {
+            font-weight: 600;
+            color: #2b2b2b;
+            font-size: 0.95rem;
+        }
+
+        .log-detail-value {
+            color: #2b2b2b;
+            font-size: 0.95rem;
+        }
+
+        .log-detail-badge {
+            display: inline-block;
+            padding: 0.4rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .log-detail-badge-create {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-detail-badge-update {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .log-detail-badge-delete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-detail-badge-login {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .log-detail-badge-logout {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .log-detail-data {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #2b2b2b;
+            border: 1px solid #e0e0e0;
+        }
+
+        .log-detail-data pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .log-detail-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .log-detail-label {
+                margin-bottom: 0.25rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="log-detail-container">
+    <div class="log-detail-card">
+        <div class="log-detail-header">
+            <h2>
+                <i class="bi bi-file-text"></i>
+                Log Entry #{{ log.id }}
+            </h2>
+            <a href="{{ path('admin_logs_index') }}" class="log-detail-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back to Logs
+            </a>
+        </div>
+        
+        <div class="log-detail-content">
+            <div class="log-detail-row">
+                <div class="log-detail-label">User</div>
+                <div class="log-detail-value">
+                    <strong>{{ log.user.name }}</strong> ({{ log.user.email }})
+                </div>
+            </div>
+            
+            <div class="log-detail-row">
+                <div class="log-detail-label">Action</div>
+                <div class="log-detail-value">
+                    <span class="log-detail-badge 
+                        {% if log.action == 'CREATE' %}log-detail-badge-create
+                        {% elseif log.action == 'UPDATE' %}log-detail-badge-update
+                        {% elseif log.action == 'DELETE' %}log-detail-badge-delete
+                        {% elseif log.action == 'LOGIN' %}log-detail-badge-login
+                        {% elseif log.action == 'LOGOUT' %}log-detail-badge-logout
+                        {% else %}log-detail-badge-logout{% endif %}">
+                        {{ log.action }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="log-detail-row">
+                <div class="log-detail-label">Entity Type</div>
+                <div class="log-detail-value">{{ log.entityType }}</div>
+            </div>
+            
+            <div class="log-detail-row">
+                <div class="log-detail-label">Entity ID</div>
+                <div class="log-detail-value">{{ log.entityId ?? 'N/A' }}</div>
+            </div>
+            
+            <div class="log-detail-row">
+                <div class="log-detail-label">Description</div>
+                <div class="log-detail-value">{{ log.description }}</div>
+            </div>
+            
+            <div class="log-detail-row">
+                <div class="log-detail-label">IP Address</div>
+                <div class="log-detail-value">
+                    <code style="background: #f8f9fa; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: 'Courier New', monospace;">
+                        {{ log.ipAddress ?? 'N/A' }}
+                    </code>
+                </div>
+            </div>
+            
+            <div class="log-detail-row">
+                <div class="log-detail-label">Timestamp</div>
+                <div class="log-detail-value">{{ log.createdAt|date('Y-m-d H:i:s') }}</div>
+            </div>
+            
+            {% if log.affectedData %}
+            <div class="log-detail-row">
+                <div class="log-detail-label">Affected Data</div>
+                <div class="log-detail-value">
+                    <div class="log-detail-data">
+                        <pre>{{ log.affectedData }}</pre>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

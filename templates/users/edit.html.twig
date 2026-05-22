@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Customer{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('form') }}
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="form-container">
+        <h2>Edit Customer</h2>
+        {{ form_start(form, { attr: { id: 'user_form' } }) }}
+            <div class="grid grid-2 gap-lg">
+                <div>
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.password) }}
+                </div>
+                <div class="role-group">
+                    {{ form_row(form.roles) }}
+                </div>
+            </div>
+            <div class="form-actions">
+                <a href="{{ path('user_index') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</section>
+{% endblock %}

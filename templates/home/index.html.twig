@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard - Shoes Admin{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('home') }}
+{% endblock %}
+
+{% block page_title %}
+    Dashboard Overview
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<section class="dashboard-cards">
+    <div class="card">
+        <h3>Total Orders</h3>
+        <p>128</p>
+    </div>
+    <div class="card">
+        <h3>Active Repairs</h3>
+        <p>24</p>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 60%;"></div>
+        </div>
+    </div>
+    <div class="card">
+        <h3>Products in Stock</h3>
+        <p>312</p>
+    </div>
+    <div class="card">
+        <h3>Revenue</h3>
+        <p>$12,430</p>
+    </div>
+</section>
+
+<section class="section recent-orders">
+    <h2>Recent Orders</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if recent_orders is defined and recent_orders|length > 0 %}
+                {% for order in recent_orders %}
+                    <tr>
+                        <td><strong>#{{ order.id }}</strong></td>
+                        <td>{{ order.customer ? order.customer.name : 'N/A' }}</td>
+                        <td>
+                            {% set st = (order.status|default('pending'))|lower %}
+                            <span class="status {{ st == 'completed' ? 'status-completed' : (st == 'pending' ? 'status-pending' : 'status-progress') }}">{{ st|capitalize }}</span>
+                        </td>
+                        <td><strong>${{ order.totalPrice|default('0.00') }}</strong></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" style="text-align:center; padding:12px;">No recent orders yet.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</section>
+
+<section class="section recent-activity">
+    <h2>Recent Activity</h2>
+    <div class="activity-feed">
+        {% if recent_activity is defined and recent_activity|length > 0 %}
+            {% for a in recent_activity %}
+                <div class="activity-item">
+                    {{ a.text }}
+                    {% if a.date is defined and a.date %}
+                        <small style="color:#6b6b6b"> • {{ a.date|date('Y-m-d H:i') }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="activity-item">No recent activity yet.</div>
+        {% endif %}
+    </div>
+</section>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('home') }}
+{% endblock %}

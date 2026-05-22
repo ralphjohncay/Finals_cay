@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - RALPHS Footwear</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2b2b2b;
+            background: #f8f9fa;
+            padding-top: 78px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 999;
+            background: rgba(12, 12, 12, 0.94);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+        }
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 800;
+            min-width: fit-content;
+        }
+        .brand-logo {
+            height: 48px;
+            width: auto;
+            max-width: min(220px, 42vw);
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+        .btn-nav {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .btn-nav-outline {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.38);
+        }
+        .btn-nav-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.55);
+        }
+        .btn-nav-solid {
+            background: linear-gradient(138deg, #d4b896 0%, #9a624c 42%, #4e2c24 100%);
+            color: #fff;
+            border: 2px solid transparent;
+        }
+        .btn-nav:hover { transform: translateY(-2px); }
+        .btn-nav-solid:hover { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35); }
+
+        .hero {
+            background: linear-gradient(145deg, #f0dcc4 0%, #c49a78 22%, #8f5644 55%, #4a2820 88%, #2a1512 100%);
+            color: white;
+            padding: 70px 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 -40px 80px rgba(20, 10, 8, 0.3);
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 80%;
+            background: radial-gradient(ellipse at center, rgba(255, 230, 200, 0.2) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero .container { position: relative; z-index: 1; }
+        .hero h1 { font-size: 2.8rem; margin-bottom: 0.75rem; text-shadow: 0 2px 16px rgba(0,0,0,0.2); }
+        .hero p { font-size: 1.15rem; opacity: 0.95; max-width: 70ch; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            padding: 60px 0;
+        }
+        .card {
+            background: linear-gradient(165deg, #ffffff 0%, #faf7f3 100%);
+            border-radius: 18px;
+            padding: 2rem;
+            border: 1px solid rgba(105, 62, 48, 0.08);
+            box-shadow: 0 6px 24px rgba(45, 28, 22, 0.07), 0 2px 8px rgba(45, 28, 22, 0.04);
+        }
+        .card h2 { color: #3f2a24; margin-bottom: 0.6rem; }
+        .muted { color: #6c757d; line-height: 1.85; }
+
+        .team {
+            padding-bottom: 70px;
+        }
+        .team h2 { color: #3f2a24; margin-bottom: 0.75rem; }
+        .team-grid {
+            margin-top: 1.25rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            display: grid;
+            gap: 0.6rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(105, 62, 48, 0.14);
+        }
+
+        .member-photo {
+            width: 100%;
+            height: 220px;
+            border-radius: 14px;
+            object-fit: cover;
+            background: rgba(105, 62, 48, 0.08);
+        }
+
+        .member-name { font-weight: 950; color: #2b2b2b; font-size: 1.15rem; margin-top: 0.25rem; }
+        .member-role { font-weight: 850; color: #3f2a24; }
+        .member-meta { color: #6c757d; line-height: 1.7; }
+
+        .member-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.25rem;
+        }
+        .tag {
+            font-weight: 850;
+            font-size: 0.85rem;
+            color: #3f2a24;
+            background: rgba(105, 62, 48, 0.10);
+            border: 1px solid rgba(105, 62, 48, 0.18);
+            padding: 0.35rem 0.55rem;
+            border-radius: 999px;
+        }
+
+        .footer {
+            background: #2b2b2b;
+            color: white;
+            padding: 2rem 20px;
+            text-align: center;
+        }
+        .footer p { opacity: 0.8; }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            body { padding-top: 92px; }
+            .navbar-inner { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar" aria-label="Primary">
+    <div class="navbar-inner">
+        <a class="brand" href="{{ path('app_homepage') }}" aria-label="RALPHS Footwear home">
+            <img class="brand-logo" src="{{ asset('image/logomain.png') }}" alt="RALPHS Footwear" width="220" height="48">
+        </a>
+        <div class="nav-actions">
+            <a href="{{ path('app_contact') }}" class="btn-nav btn-nav-outline"><i class="bi bi-envelope"></i> Contact</a>
+            <a href="{{ path('login') }}" class="btn-nav btn-nav-outline"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+            <a href="{{ path('app_register') }}" class="btn-nav btn-nav-solid"><i class="bi bi-person-plus"></i> Signup</a>
+        </div>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="container">
+        <h1>About Us</h1>
+        <p>We’re focused on quality footwear and a smooth, trackable workflow that helps teams manage products, orders, and reporting without the clutter.</p>
+    </div>
+</header>
+
+<main class="container">
+    <section class="grid" aria-label="About details">
+        <div class="card">
+            <h2>Our Mission</h2>
+            <p class="muted">Deliver a consistent footwear experience through quality products, clear inventory management, and dependable order tracking.</p>
+        </div>
+        <div class="card">
+            <h2>What We Stand For</h2>
+            <p class="muted">Trust, speed, and support. We keep processes simple so teams can work faster, reduce errors, and stay aligned.</p>
+        </div>
+    </section>
+
+    <section class="team" aria-label="Meet the team">
+        <h2>Meet the Teams</h2>
+        <p class="muted">The people and roles behind smooth day-to-day operations.</p>
+
+        <div class="team-grid">
+            <article class="team-member">
+                <img class="member-photo" src="/images/team/ceo.jpg" alt="Ralph Cay">
+                <div class="member-name">Ralph Cay</div>
+                <div class="member-role">Store Manager</div>
+                <div class="member-meta">Oversees daily operations and keeps the customer experience consistent from checkout to fulfillment.</div>
+                <div class="member-tags">
+                    <span class="tag">Operations</span>
+                    <span class="tag">Customer Care</span>
+                </div>
+            </article>
+
+            <article class="team-member">
+                <img class="member-photo" src="/images/team/mia-santos.svg" alt="Mia Santos">
+                <div class="member-name">Mia Santos</div>
+                <div class="member-role">Inventory Lead</div>
+                <div class="member-meta">Maintains stock accuracy, product details, and category organization so items are always easy to find.</div>
+                <div class="member-tags">
+                    <span class="tag">Inventory</span>
+                    <span class="tag">Catalog</span>
+                </div>
+            </article>
+
+            <article class="team-member">
+                <img class="member-photo" src="/images/team/jordan-lee.svg" alt="Jordan Lee">
+                <div class="member-name">Jordan Lee</div>
+                <div class="member-role">Order Specialist</div>
+                <div class="member-meta">Handles approvals and order status updates, keeping the fulfillment flow clean and predictable.</div>
+                <div class="member-tags">
+                    <span class="tag">Orders</span>
+                    <span class="tag">Fulfillment</span>
+                </div>
+            </article>
+
+            <article class="team-member">
+                <img class="member-photo" src="/images/team/ava-reyes.svg" alt="Ava Reyes">
+                <div class="member-name">Ava Reyes</div>
+                <div class="member-role">Reports & Analytics</div>
+                <div class="member-meta">Turns activity into clear summaries so decisions can be made quickly and confidently.</div>
+                <div class="member-tags">
+                    <span class="tag">Analytics</span>
+                    <span class="tag">Reporting</span>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; {{ "now"|date("Y") }} RALPHS Footwear. All rights reserved.</p>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - RALPHS Footwear</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2b2b2b;
+            background: #f8f9fa;
+            padding-top: 78px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 999;
+            background: rgba(12, 12, 12, 0.94);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+        }
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 800;
+            min-width: fit-content;
+        }
+        .brand-logo {
+            height: 48px;
+            width: auto;
+            max-width: min(220px, 42vw);
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+        .btn-nav {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .btn-nav-outline {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.38);
+        }
+        .btn-nav-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.55);
+        }
+        .btn-nav-solid {
+            background: linear-gradient(138deg, #d4b896 0%, #9a624c 42%, #4e2c24 100%);
+            color: #fff;
+            border: 2px solid transparent;
+        }
+        .btn-nav:hover { transform: translateY(-2px); }
+        .btn-nav-solid:hover { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35); }
+
+        .hero {
+            background: linear-gradient(145deg, #f0dcc4 0%, #c49a78 22%, #8f5644 55%, #4a2820 88%, #2a1512 100%);
+            color: white;
+            padding: 70px 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 -40px 80px rgba(20, 10, 8, 0.3);
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 80%;
+            background: radial-gradient(ellipse at center, rgba(255, 230, 200, 0.2) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero .container { position: relative; z-index: 1; }
+        .hero h1 { font-size: 2.8rem; margin-bottom: 0.75rem; text-shadow: 0 2px 16px rgba(0,0,0,0.2); }
+        .hero p { font-size: 1.15rem; opacity: 0.95; max-width: 70ch; }
+
+        .grid {
+            padding: 60px 0 80px;
+            display: grid;
+            grid-template-columns: 0.85fr 1.15fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        .card {
+            background: linear-gradient(165deg, #ffffff 0%, #faf7f3 100%);
+            border-radius: 18px;
+            padding: 2rem;
+            border: 1px solid rgba(105, 62, 48, 0.08);
+            box-shadow: 0 6px 24px rgba(45, 28, 22, 0.07), 0 2px 8px rgba(45, 28, 22, 0.04);
+        }
+        .card h2 { color: #3f2a24; margin-bottom: 0.6rem; }
+        .muted { color: #6c757d; line-height: 1.85; }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            color: #2b2b2b;
+            font-weight: 750;
+        }
+        .contact-item i { color: #8f5644; font-size: 1.2rem; }
+
+        .embed-wrap {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            background: white;
+        }
+        .embed-wrap iframe {
+            width: 100%;
+            height: 675px;
+            border: 0;
+            display: block;
+        }
+
+        .footer {
+            background: #2b2b2b;
+            color: white;
+            padding: 2rem 20px;
+            text-align: center;
+        }
+        .footer p { opacity: 0.8; }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            body { padding-top: 92px; }
+            .navbar-inner { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar" aria-label="Primary">
+    <div class="navbar-inner">
+        <a class="brand" href="{{ path('app_homepage') }}" aria-label="RALPHS Footwear home">
+            <img class="brand-logo" src="{{ asset('image/logomain.png') }}" alt="RALPHS Footwear" width="220" height="48">
+        </a>
+        <div class="nav-actions">
+            <a href="{{ path('app_about') }}" class="btn-nav btn-nav-outline"><i class="bi bi-building"></i> About</a>
+            <a href="{{ path('login') }}" class="btn-nav btn-nav-outline"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+            <a href="{{ path('app_register') }}" class="btn-nav btn-nav-solid"><i class="bi bi-person-plus"></i> Signup</a>
+        </div>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="container">
+        <h1>Contact Us</h1>
+        <p>Use the form below to send us a message. We’ll get back to you as soon as possible.</p>
+    </div>
+</header>
+
+<main class="container">
+    <section class="grid" aria-label="Contact form and details">
+        <div class="card">
+            <h2>Quick Info</h2>
+            <p class="muted">For the fastest response, submit the form. If you’re already a staff/admin user, you can also login for system access.</p>
+            <div class="contact-item"><i class="bi bi-clock"></i> Response time: within 1–2 business days</div>
+            <div class="contact-item"><i class="bi bi-shield-check"></i> Your message stays private</div>
+            <div class="contact-item"><i class="bi bi-check2-circle"></i> Include order details when relevant</div>
+        </div>
+
+        <div class="embed-wrap" aria-label="Embedded Google Form">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdNtHo2727YqNR9gmXQNAhIXLrjvlT7JEeDhhpYKC-dIfCg1g/viewform?embedded=true" width="640" height="675" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; {{ "now"|date("Y") }} RALPHS Footwear. All rights reserved.</p>
+    </div>
+</footer>
+</body>
+</html>

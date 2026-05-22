@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home - RALPHS Footwear{% endblock %}
+
+{% block page_title %}
+    Welcome{% if user %}, {{ user.name }}{% endif %}
+{% endblock %}
+
+{% block content %}
+    <section class="section" style="background: white; border-radius: 12px; padding: 18px;">
+        <h3 style="margin: 0 0 10px 0;">Customer Homepage</h3>
+        <p style="margin: 0 0 14px 0; color: #6b6b6b;">
+            Browse products, place orders, and track your recent activity.
+        </p>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+            <a href="{{ path('app_product_index') }}"
+               style="display:block; padding:14px; border:1px solid #eee; border-radius:12px; text-decoration:none; color:inherit;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="bi bi-bag" style="font-size: 1.2rem;"></i>
+                    <div>
+                        <div style="font-weight:700;">Shop Products</div>
+                        <div style="color:#6b6b6b; font-size:.95rem;">Explore what’s available</div>
+                    </div>
+                </div>
+            </a>
+
+            <a href="{{ path('app_order_index') }}"
+               style="display:block; padding:14px; border:1px solid #eee; border-radius:12px; text-decoration:none; color:inherit;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="bi bi-receipt" style="font-size: 1.2rem;"></i>
+                    <div>
+                        <div style="font-weight:700;">My Orders</div>
+                        <div style="color:#6b6b6b; font-size:.95rem;">View order history</div>
+                    </div>
+                </div>
+            </a>
+
+            <a href="{{ path('app_profile') }}"
+               style="display:block; padding:14px; border:1px solid #eee; border-radius:12px; text-decoration:none; color:inherit;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="bi bi-person" style="font-size: 1.2rem;"></i>
+                    <div>
+                        <div style="font-weight:700;">My Profile</div>
+                        <div style="color:#6b6b6b; font-size:.95rem;">Update your details</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </section>
+{% endblock %}
+

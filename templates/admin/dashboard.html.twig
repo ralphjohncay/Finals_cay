@@ -1,0 +1,393 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard - Shoes Admin{% endblock %}
+
+{% block page_title %}Admin Dashboard{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2b2b2b;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .dashboard-header p {
+            color: #6c757d;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.75rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--stat-color);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--stat-bg);
+            color: var(--stat-color);
+        }
+
+        .stat-card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .stat-card-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #2b2b2b;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .stat-card-users {
+            --stat-color: #667eea;
+            --stat-bg: rgba(102, 126, 234, 0.1);
+        }
+
+        .stat-card-staff {
+            --stat-color: #764ba2;
+            --stat-bg: rgba(118, 75, 162, 0.1);
+        }
+
+        .stat-card-products {
+            --stat-color: #4facfe;
+            --stat-bg: rgba(79, 172, 254, 0.1);
+        }
+
+        .stat-card-orders {
+            --stat-color: #43e97b;
+            --stat-bg: rgba(67, 233, 123, 0.1);
+        }
+
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .dashboard-section {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .dashboard-section-header {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            padding: 1.5rem 2rem;
+            color: white;
+        }
+
+        .dashboard-section-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dashboard-section-content {
+            padding: 2rem;
+        }
+
+        .activities-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .activities-table thead {
+            background: #f8f9fa;
+        }
+
+        .activities-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .activities-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .activities-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .activities-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .activities-table td {
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #2b2b2b;
+            vertical-align: middle;
+        }
+
+        .activity-badge {
+            display: inline-block;
+            padding: 0.4rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .activity-badge-create {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .activity-badge-update {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .activity-badge-delete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .activity-badge-login {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .activity-badge-default {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .view-all-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-section-content {
+                padding: 1rem;
+            }
+
+            .activities-table {
+                font-size: 0.85rem;
+            }
+
+            .activities-table th,
+            .activities-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Welcome Back, Admin!</h1>
+        <p>Here's an overview of your system</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card stat-card-users">
+            <div class="stat-card-header">
+                <div>
+                    <p class="stat-card-title">Total Users</p>
+                    <p class="stat-card-value">{{ total_users }}</p>
+                </div>
+                <div class="stat-card-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-card-staff">
+            <div class="stat-card-header">
+                <div>
+                    <p class="stat-card-title">Total Staff</p>
+                    <p class="stat-card-value">{{ total_staff }}</p>
+                </div>
+                <div class="stat-card-icon">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-card-products">
+            <div class="stat-card-header">
+                <div>
+                    <p class="stat-card-title">Total Products</p>
+                    <p class="stat-card-value">{{ total_products }}</p>
+                </div>
+                <div class="stat-card-icon">
+                    <i class="bi bi-box"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-card-orders">
+            <div class="stat-card-header">
+                <div>
+                    <p class="stat-card-title">Total Orders</p>
+                    <p class="stat-card-value">{{ total_orders }}</p>
+                </div>
+                <div class="stat-card-icon">
+                    <i class="bi bi-cart"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="dashboard-section">
+            <div class="dashboard-section-header">
+                <h2>
+                    <i class="bi bi-clock-history"></i> Recent Activities
+                </h2>
+            </div>
+            <div class="dashboard-section-content">
+                {% if recent_activities|length > 0 %}
+                    <table class="activities-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Entity</th>
+                                <th>Description</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for activity in recent_activities %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ activity.user.name }}</strong><br>
+                                        <small style="color: #6c757d;">{{ activity.user.email }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="activity-badge 
+                                            {% if activity.action == 'CREATE' %}activity-badge-create
+                                            {% elseif activity.action == 'UPDATE' %}activity-badge-update
+                                            {% elseif activity.action == 'DELETE' %}activity-badge-delete
+                                            {% elseif activity.action == 'LOGIN' %}activity-badge-login
+                                            {% else %}activity-badge-default{% endif %}">
+                                            {{ activity.action }}
+                                        </span>
+                                    </td>
+                                    <td>{{ activity.entityType }} #{{ activity.entityId }}</td>
+                                    <td>{{ activity.description }}</td>
+                                    <td>{{ activity.createdAt|date('M d, Y H:i') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <a href="{{ path('admin_logs_index') }}" class="view-all-link">
+                        <i class="bi bi-arrow-right"></i> View All Logs
+                    </a>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <p>No recent activities</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

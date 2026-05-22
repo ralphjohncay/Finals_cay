@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RALPHS Footwear - Quality Shoes & Services</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2b2b2b;
+            overflow-x: hidden;
+            padding-top: 78px; /* fixed navbar offset */
+        }
+
+        section {
+            scroll-margin-top: 90px;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: rgba(12, 12, 12, 0.94);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            min-width: fit-content;
+        }
+
+        .brand-logo {
+            height: 48px;
+            width: auto;
+            max-width: min(220px, 42vw);
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.88);
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 10px 12px;
+            border-radius: 10px;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: fit-content;
+        }
+
+        .btn-nav {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-nav-outline {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.38);
+        }
+
+        .btn-nav-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.55);
+            transform: translateY(-2px);
+        }
+
+        .btn-nav-solid {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-nav-solid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(105, 62, 48, 0.25);
+        }
+
+        /* Section 1: Hero Section */
+        .hero-section {
+            background: linear-gradient(145deg, #f0dcc4 0%, #c49a78 22%, #8f5644 55%, #4a2820 88%, #2a1512 100%);
+            color: white;
+            padding: 110px 20px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 -60px 100px rgba(20, 10, 8, 0.35);
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.35;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 70%;
+            background: radial-gradient(ellipse at center, rgba(255, 230, 200, 0.22) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-brand-logo {
+            height: auto;
+            max-height: 120px;
+            width: auto;
+            max-width: min(360px, 92%);
+            margin: 0 auto 1.5rem;
+            display: block;
+            object-fit: contain;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero-section p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem 2.5rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #8f5644;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(45, 28, 22, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #8f5644;
+        }
+
+        /* Section 2: Features Section */
+        .features-section {
+            padding: 80px 20px;
+            background: linear-gradient(180deg, #faf6f0 0%, #f0e8df 50%, #ebe2d8 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #3f2a24;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(165deg, #ffffff 0%, #faf7f3 100%);
+            padding: 2.5rem;
+            border-radius: 18px;
+            border: 1px solid rgba(105, 62, 48, 0.08);
+            box-shadow:
+                0 4px 6px rgba(45, 28, 22, 0.04),
+                0 12px 32px rgba(72, 42, 32, 0.08);
+            text-align: center;
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(143, 86, 68, 0.2);
+            box-shadow:
+                0 8px 16px rgba(45, 28, 22, 0.08),
+                0 20px 48px rgba(105, 62, 48, 0.18);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #f0dcc4 0%, #b88968 35%, #6e3828 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+            box-shadow:
+                inset 0 2px 4px rgba(255, 255, 255, 0.25),
+                0 8px 20px rgba(45, 28, 22, 0.35);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: #3f2a24;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #6c757d;
+            line-height: 1.8;
+        }
+
+        /* Section 3: Services Section */
+        .services-section {
+            padding: 80px 20px;
+            background: linear-gradient(180deg, #ffffff 0%, #fdfcfa 100%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: linear-gradient(160deg, #faf7f3 0%, #ffffff 55%, #fffefd 100%);
+            padding: 2.5rem;
+            border-radius: 18px;
+            border: 1px solid rgba(105, 62, 48, 0.1);
+            box-shadow: 0 6px 24px rgba(45, 28, 22, 0.06);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            border-color: rgba(143, 86, 68, 0.45);
+            box-shadow: 0 12px 40px rgba(105, 62, 48, 0.14);
+            transform: translateY(-4px);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: #8f5644;
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            color: #3f2a24;
+            margin-bottom: 1rem;
+        }
+
+        .service-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .service-card ul li {
+            padding: 0.5rem 0;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .service-card ul li i {
+            color: #8f5644;
+        }
+
+        /* Section 4: Highlights Section */
+        .highlights-section {
+            padding: 80px 20px;
+            background: linear-gradient(145deg, #e8d0b4 0%, #a87258 38%, #6b382c 72%, #261410 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        .highlights-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 50% at 20% 20%, rgba(255, 220, 190, 0.18), transparent 55%);
+            pointer-events: none;
+        }
+
+        .highlights-section .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .highlights-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .highlights-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlights-text p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+
+        .highlights-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Section 5: Testimonials Section */
+        .testimonials-section {
+            padding: 80px 20px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+
+        .testimonials-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .testimonials-content h2 {
+            font-size: 2.5rem;
+            color: #3f2a24;
+            margin-bottom: 1rem;
+        }
+
+        .testimonials-content p {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 2.5rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            text-align: left;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(105, 62, 48, 0.12);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 26px rgba(105, 62, 48, 0.15);
+        }
+
+        .testimonial-quote {
+            font-size: 1.05rem;
+            color: #2b2b2b;
+            line-height: 1.8;
+            margin-bottom: 1.25rem;
+        }
+
+        .testimonial-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .testimonial-rating {
+            color: #8f5644;
+            display: inline-flex;
+            gap: 0.25rem;
+        }
+
+        .testimonials-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta {
+            padding: 1.2rem 3rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cta-primary {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+        }
+
+        .btn-cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(105, 62, 48, 0.3);
+        }
+
+        .btn-cta-secondary {
+            background: white;
+            color: #8f5644;
+            border: 2px solid #8f5644;
+        }
+
+        .btn-cta-secondary:hover {
+            background: #8f5644;
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2b2b2b;
+            color: white;
+            padding: 2rem 20px;
+            text-align: center;
+        }
+
+        .footer p {
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 92px;
+            }
+
+            .navbar-inner {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-section p {
+                font-size: 1.1rem;
+            }
+
+            .highlights-content {
+                grid-template-columns: 1fr;
+            }
+
+            .highlights-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" aria-label="Primary">
+        <div class="navbar-inner">
+            <a class="brand" href="#top" aria-label="RALPHS Footwear home">
+                <img class="brand-logo" src="{{ asset('image/logomain.png') }}" alt="RALPHS Footwear" width="220" height="48">
+            </a>
+
+            <div class="nav-links" role="navigation" aria-label="Primary links">
+                <a href="#features"><i class="bi bi-stars"></i> Features</a>
+                <a href="#services"><i class="bi bi-grid-1x2"></i> Services</a>
+                <a href="{{ path('app_about') }}"><i class="bi bi-building"></i> About Us</a>
+                <a href="{{ path('app_contact') }}"><i class="bi bi-envelope"></i> Contact Us</a>
+            </div>
+
+            <div class="nav-actions">
+                <a href="{{ path('login') }}" class="btn-nav btn-nav-outline">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a href="{{ path('app_register') }}" class="btn-nav btn-nav-solid">
+                    <i class="bi bi-person-plus"></i> Signup
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="top"></div>
+
+    <!-- Section 1: Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <img class="hero-brand-logo" src="{{ asset('image/logomain.png') }}" alt="" aria-hidden="true">
+            <h1><i class="bi bi-shop"></i> Welcome to RALPHS Footwear</h1>
+            <p>Your trusted partner for quality shoes and exceptional service</p>
+            <div class="hero-buttons">
+                <a href="{{ path('login') }}" class="btn-primary">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a href="#features" class="btn-secondary">
+                    <i class="bi bi-info-circle"></i> Learn More
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose Us</h2>
+            <p class="section-subtitle">Experience excellence in every step</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3>Quality Assurance</h3>
+                    <p>We guarantee the highest quality products and services, ensuring your complete satisfaction with every purchase.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h3>Fast Processing</h3>
+                    <p>Efficient order processing and quick turnaround times to get your products to you when you need them.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h3>Expert Team</h3>
+                    <p>Our dedicated staff is committed to providing exceptional customer service and support throughout your journey.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3>Track Your Orders</h3>
+                    <p>Stay informed with real-time order tracking and status updates, keeping you in control every step of the way.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Services Section -->
+    <section class="services-section" id="services">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Comprehensive solutions for all your footwear needs</p>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <h3>Product Management</h3>
+                    <ul>
+                        <li><i class="bi bi-check-circle"></i> Wide range of quality footwear</li>
+                        <li><i class="bi bi-check-circle"></i> Real-time inventory tracking</li>
+                        <li><i class="bi bi-check-circle"></i> Detailed product information</li>
+                        <li><i class="bi bi-check-circle"></i> Category organization</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="bi bi-cart-check"></i>
+                    </div>
+                    <h3>Order Management</h3>
+                    <ul>
+                        <li><i class="bi bi-check-circle"></i> Easy order placement</li>
+                        <li><i class="bi bi-check-circle"></i> Order approval workflow</li>
+                        <li><i class="bi bi-check-circle"></i> Status tracking</li>
+                        <li><i class="bi bi-check-circle"></i> Order history</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="bi bi-bar-chart"></i>
+                    </div>
+                    <h3>Analytics & Reports</h3>
+                    <ul>
+                        <li><i class="bi bi-check-circle"></i> Financial insights</li>
+                        <li><i class="bi bi-check-circle"></i> Revenue tracking</li>
+                        <li><i class="bi bi-check-circle"></i> Performance metrics</li>
+                        <li><i class="bi bi-check-circle"></i> Data-driven decisions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Highlights Section -->
+    <section class="highlights-section">
+        <div class="container">
+            <div class="highlights-content">
+                <div class="highlights-text">
+                    <h2>Built for Smooth Operations</h2>
+                    <p>From product listing to order fulfillment, our workflow is designed to keep everything organized, fast, and easy to track.</p>
+                    <p>Whether you’re managing inventory or reviewing orders, you’ll always know what’s happening and what needs attention next.</p>
+                    <div class="highlights-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">100+</div>
+                            <div class="stat-label">Items Managed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Orders Processed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">98%</div>
+                            <div class="stat-label">On-Time Updates</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlights-text">
+                    <h2>How It Helps You</h2>
+                    <p>Get clearer visibility into inventory, reduce manual steps, and maintain consistent order status updates that your team can rely on.</p>
+                    <p>Everything is designed to be straightforward and efficient, so you spend less time searching and more time getting work done.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="testimonials-content">
+                <h2>What People Like</h2>
+                <p>Simple workflows, clear tracking, and fewer surprises day to day.</p>
+
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote">“Order statuses are easy to follow and the approvals feel very straightforward.”</div>
+                        <div class="testimonial-meta">
+                            <span>Operations</span>
+                            <span class="testimonial-rating">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote">“Inventory tracking is much clearer now, especially when managing multiple products.”</div>
+                        <div class="testimonial-meta">
+                            <span>Stock Team</span>
+                            <span class="testimonial-rating">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote">“The layout is clean and it’s quick to get to what I need.”</div>
+                        <div class="testimonial-meta">
+                            <span>Admin</span>
+                            <span class="testimonial-rating">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonials-buttons">
+                    <a href="{{ path('login') }}" class="btn-cta btn-cta-primary">
+                        <i class="bi bi-box-arrow-in-right"></i> Login to System
+                    </a>
+                    <a href="#services" class="btn-cta btn-cta-secondary">
+                        <i class="bi bi-list-check"></i> View Services
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ "now"|date("Y") }} RALPHS Footwear. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+

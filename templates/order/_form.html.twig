@@ -1,0 +1,60 @@
+{# templates/order/_form.html.twig #}
+{{ form_start(form, { attr: { id: 'order_form' } }) }}
+
+<div class="panel p-3 mb-4">
+    <h3>Customer Information</h3>
+    {{ form_row(form.customer) }}
+</div>
+
+<div class="panel p-3 mb-4">
+    <h3>Order Details</h3>
+    {{ form_row(form.orderDate) }}
+    {{ form_row(form.status) }}
+</div>
+
+<div class="panel p-3 mb-4">
+    <h3>Order Items</h3>
+    <table id="order-items-table" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Service</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody 
+            id="order-items-body"
+            data-prototype="{{ form_widget(form.orderItems.vars.prototype)|e('html_attr') }}"
+            data-index="{{ form.orderItems|length }}"
+        >
+            {% for item in form.orderItems %}
+                <tr class="order-item-row">
+                    <td>{{ form_widget(item.product) }}</td>
+                    <td>{{ form_widget(item.service) }}</td>
+                    <td>{{ form_widget(item.quantity) }}</td>
+                    <td>{{ form_widget(item.price) }}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-order-item">Remove</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button type="button" id="add-order-item" class="btn btn-primary">+ Add Item</button>
+</div>
+
+<div class="panel p-3 mb-4">
+    {{ form_row(form.totalPrice) }}
+</div>
+
+<div class="actions-bottom mt-4">
+    <a href="{{ path('app_order_index') }}" class="btn btn-secondary">← Back to List</a>
+    <button type="submit" id="save-order" class="btn btn-primary">
+        {{ button_label|default('Save Order') }}
+    </button>
+</div>
+
+{{ form_end(form) }}

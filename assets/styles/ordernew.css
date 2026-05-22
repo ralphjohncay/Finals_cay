@@ -1,0 +1,205 @@
+/* =======================
+Orders - New & Edit Pages
+======================= */
+
+body {
+font-family: 'Raleway', 'Inter', 'Segoe UI', sans-serif;
+background-color: #fef7f7;
+color: #3E2723;
+}
+
+/* Container */
+.order-form-container {
+background: #ffffff;
+border-radius: 14px;
+padding: 2.5rem;
+box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+margin: 2.5rem auto;
+max-width: 1000px;
+width: 100%;
+display: flex;
+flex-direction: column;
+gap: 2rem;
+}
+
+/* Headings */
+.order-form-container h1 {
+font-size: 1.9rem;
+font-weight: 700;
+color: #3f2a24;
+margin-bottom: 1.5rem;
+border-bottom: 3px solid #d4a574;
+padding-bottom: 0.5rem;
+}
+
+/* Form Layout */
+.order-form-container form {
+display: flex;
+flex-direction: column;
+gap: 2rem;
+}
+
+/* Panels */
+.panel {
+background: #fff;
+border-radius: 12px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+padding: 1.5rem;
+}
+
+/* Customer panel above Order Details */
+.customer-panel {
+order: 1;
+}
+
+.order-details-panel {
+order: 2;
+max-height: 75vh;           /* scrollable section */
+overflow-y: auto;
+padding-right: 1rem;
+}
+
+/* Table Styling */
+.table {
+width: 100%;
+border-collapse: collapse;
+}
+
+.table thead {
+background-color: #f8f4ef;
+border-bottom: 2px solid #d4a574;
+}
+
+.table th, .table td {
+text-align: center;
+vertical-align: middle;
+padding: 0.6rem;
+border-bottom: 1px solid #eee;
+}
+
+/* Product and Service inputs alignment */
+.order-item-row select,
+.order-item-row input[type="number"],
+.order-item-row input[type="text"] {
+width: 100%;
+padding: 0.5rem;
+border-radius: 8px;
+border: 1px solid #ccc;
+background-color: #fffaf3;
+font-size: 0.9rem;
+color: #3E2723;
+box-sizing: border-box;
+}
+
+/* Focus styles */
+.order-item-row select:focus,
+.order-item-row input:focus {
+outline: none;
+border-color: #d4a574;
+box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.25);
+}
+
+/* Remove and Add buttons */
+.remove-item {
+background-color: #e74c3c;
+color: white;
+border: none;
+padding: 0.4rem 0.8rem;
+border-radius: 6px;
+font-size: 0.85rem;
+transition: all 0.3s ease;
+}
+
+.remove-item:hover {
+background-color: #c0392b;
+}
+
+#add-order-item {
+margin-top: 1rem;
+background-color: #3f2a24;
+color: #fff;
+border: none;
+border-radius: 8px;
+padding: 0.6rem 1rem;
+font-weight: 600;
+cursor: pointer;
+}
+
+#add-order-item:hover {
+background-color: #7a5248;
+}
+
+/* Buttons */
+.form-actions,
+.actions-bottom {
+margin-top: 2rem;
+display: flex;
+gap: 1rem;
+justify-content: flex-end;
+}
+
+.btn {
+display: inline-block;
+padding: 0.65rem 1.4rem;
+border-radius: 10px;
+font-weight: 600;
+text-decoration: none;
+transition: all 0.3s ease;
+font-size: 0.95rem;
+cursor: pointer;
+border: none;
+}
+
+.btn-primary {
+background-color: #8f5644;
+color: #fff;
+}
+
+.btn-primary:hover {
+background-color: #3f2a24;
+transform: translateY(-2px);
+box-shadow: 0 4px 10px rgba(94, 64, 57, 0.3);
+}
+
+.btn-secondary {
+background-color: #6B6B6B;
+color: #fff;
+}
+
+.btn-secondary:hover {
+background-color: #4B4B4B;
+transform: translateY(-2px);
+}
+
+/* Validation */
+input:invalid,
+select:invalid,
+textarea:invalid {
+border-color: #e74c3c;
+}
+
+input:invalid:focus,
+select:invalid:focus,
+textarea:invalid:focus {
+box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+.order-form-container {
+padding: 1.5rem;
+}
+
+.form-actions,
+.actions-bottom {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.order-details-panel {
+    max-height: unset;
+    overflow: visible;
+}
+
+
+}

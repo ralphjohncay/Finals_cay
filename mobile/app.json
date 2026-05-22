@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "RALPHS Footwear",
+    "slug": "ralphs-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "ralphs",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#8f5644"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ralphs.footwear"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#8f5644"
+      },
+      "package": "com.ralphs.footwear"
+    },
+    "extra": {
+      "apiUrl": "http://127.0.0.1:8000"
+    }
+  }
+}

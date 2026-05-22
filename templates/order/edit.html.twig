@@ -1,0 +1,544 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Order{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('orderedit') }}
+    <style>
+        .order-form-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+
+        .order-form-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .order-form-header {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+        }
+
+        .order-form-header h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .order-form-content {
+            padding: 2.5rem;
+        }
+
+        .order-form-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .order-form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .order-form-section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2b2b2b;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .order-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .order-form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2b2b2b;
+            font-size: 0.95rem;
+        }
+
+        .order-form-group input[type="datetime-local"],
+        .order-form-group input[type="text"],
+        .order-form-group input[type="number"],
+        .order-form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            font-family: inherit;
+        }
+
+        .order-form-group input:focus,
+        .order-form-group select:focus {
+            outline: none;
+            border-color: #8f5644;
+            box-shadow: 0 0 0 3px rgba(105, 62, 48, 0.15);
+        }
+
+        .order-total-price-wrapper {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .order-currency-symbol {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #666;
+            flex-shrink: 0;
+            line-height: 1.5;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .order-total-price-input,
+        .order-total-price-wrapper input,
+        .order-total-price-wrapper input[type="text"],
+        .order-total-price-wrapper input[type="number"] {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            color: #2b2b2b;
+            transition: all 0.3s ease;
+            line-height: 1.5;
+            height: auto;
+            min-width: 0;
+            display: block;
+            width: 100%;
+            margin: 0;
+        }
+
+        .order-total-price-wrapper input:focus {
+            outline: none;
+            border-color: #8f5644;
+            box-shadow: 0 0 0 3px rgba(105, 62, 48, 0.15);
+            background-color: #fff;
+        }
+
+        .order-total-price-wrapper input:disabled {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+            opacity: 1;
+        }
+
+        .order-items-table-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        .order-items-table thead {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+        }
+
+        .order-items-table th {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-items-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .order-items-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .order-items-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .order-items-table td {
+            padding: 1.25rem;
+            vertical-align: middle;
+        }
+
+        .order-items-table select,
+        .order-items-table .form-select {
+            padding: 0.625rem 0.875rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: #fff;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .order-items-table select:focus,
+        .order-items-table .form-select:focus {
+            outline: none;
+            border-color: #8f5644;
+            box-shadow: 0 0 0 3px rgba(105, 62, 48, 0.15);
+        }
+
+        .order-item-remove-btn {
+            padding: 0.5rem 1rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .order-item-remove-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .order-add-item-btn {
+            padding: 0.75rem 1.5rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .order-add-item-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .order-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .order-form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            flex-wrap: wrap;
+        }
+
+        .order-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .order-btn-primary {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+        }
+
+        .order-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .order-btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .order-btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .order-btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .order-btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .order-form-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #f5c6cb;
+        }
+
+        .order-form-error ul {
+            margin: 0.5rem 0 0 0;
+            padding-left: 1.5rem;
+        }
+
+        /* Hide quantity input fields from form widget - we use custom dropdown instead */
+        .order-items-table input[name*="[quantity]"],
+        .order-items-table input[type="number"][name*="quantity"],
+        .order-items-table .item-quantity,
+        .order-items-table td input[name*="quantity"],
+        .order-item-row input[name*="[quantity]"],
+        .order-item-row input[type="number"],
+        .order-form-container input[name*="[quantity]"],
+        .order-form-container input[type="number"][name*="quantity"],
+        input.item-quantity,
+        input[name*="orderItems"][name*="quantity"] {
+            display: none !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            border: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .order-form-header {
+                padding: 1.5rem;
+            }
+            .order-form-content {
+                padding: 1.5rem;
+            }
+            .order-items-table-wrapper {
+                overflow-x: scroll;
+            }
+            .order-form-actions {
+                flex-direction: column;
+            }
+            .order-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="order-form-container">
+    <div class="order-form-card">
+        <div class="order-form-header">
+            <h2>
+                <i class="bi bi-pencil-square"></i> Edit Order
+            </h2>
+        </div>
+
+        <div class="order-form-content">
+            {{ form_start(form, { attr: { id: 'order_form' } }) }}
+                {% if form.vars.submitted and not form.vars.valid %}
+                    <div class="order-form-error">
+                        <strong>Please fix the following errors:</strong>
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="order-form-section">
+                    <h3 class="order-form-section-title">
+                        <i class="bi bi-calendar-event"></i> Order Information
+                    </h3>
+                    <div class="order-form-group">
+                        {{ form_label(form.orderDate) }}
+                        {{ form_widget(form.orderDate, { 'attr': {'class': 'form-control', 'type': 'datetime-local'} }) }}
+                        {{ form_errors(form.orderDate) }}
+                    </div>
+                </div>
+
+                <div class="order-form-section">
+                    <h3 class="order-form-section-title">
+                        <i class="bi bi-box-seam"></i> Order Items
+                    </h3>
+                    <div class="order-items-table-wrapper">
+                        <table class="order-items-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-items-body"
+                                   data-prototype="{{ form_widget(form.orderItems.vars.prototype)|e('html_attr') }}"
+                                   data-index="{{ form.orderItems|length }}">
+                                {% for itemForm in form.orderItems %}
+                                    <tr class="order-item-row">
+                                        <td>{{ form_widget(itemForm.product, { 'attr': {'class': 'form-select'} }) }}</td>
+                                        <td>
+                                            <select class="form-select qty-dropdown" name="{{ itemForm.quantity.vars.full_name }}">
+                                                {% set currentQty = itemForm.quantity.vars.value ?? 1 %}
+                                                {% set maxQty = 50 %}
+                                                {% for i in 1..maxQty %}
+                                                    <option value="{{ i }}" {% if currentQty == i %}selected{% endif %}>{{ i }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="order-item-remove-btn remove-item">
+                                                <i class="bi bi-trash"></i> Remove
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="order-add-item-btn" id="add-order-item">
+                        <i class="bi bi-plus-circle"></i> Add Item
+                    </button>
+                </div>
+
+                <div class="order-form-section">
+                    <h3 class="order-form-section-title">
+                        <i class="bi bi-receipt"></i> Order Summary
+                    </h3>
+                    <div class="order-summary">
+                        <div class="order-form-group">
+                            {{ form_label(form.totalPrice) }}
+                            <div class="order-total-price-wrapper">
+                                <span class="order-currency-symbol">₱</span>
+                                {{ form_widget(form.totalPrice, { 'attr': {'class': 'order-total-price-input'} }) }}
+                            </div>
+                            {{ form_errors(form.totalPrice) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-form-actions">
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <button type="submit" class="order-btn order-btn-primary">
+                            <i class="bi bi-check-circle"></i> Update Order
+                        </button>
+                    {% else %}
+                        <button type="submit" class="order-btn order-btn-primary">
+                            <i class="bi bi-check-circle"></i> Confirm Changes - Waiting for Admin Approval
+                        </button>
+                    {% endif %}
+                    <a href="{{ path('app_order_index') }}" class="order-btn order-btn-secondary">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            {{ form_widget(form._token) }}
+            {{ form_end(form, {'render_rest': false}) }}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
+                    {{ include('order/_delete_form.html.twig') }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('ordernew') }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderDateInput = document.querySelector('input[name="orders[orderDate]"]');
+            if (orderDateInput) {
+                // Ensure it's a datetime-local input
+                orderDateInput.setAttribute('type', 'datetime-local');
+                
+                // Function to get current datetime in the correct format
+                function getCurrentDateTime() {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    return `${year}-${month}-${day}T${hours}:${minutes}`;
+                }
+                
+                // Set minimum date and time to now
+                const minDateTime = getCurrentDateTime();
+                orderDateInput.setAttribute('min', minDateTime);
+                
+                // Update min attribute every minute to prevent selecting past times
+                setInterval(function() {
+                    const currentMinDateTime = getCurrentDateTime();
+                    orderDateInput.setAttribute('min', currentMinDateTime);
+                    
+                    // If current value is in the past, update it
+                    if (orderDateInput.value && orderDateInput.value < currentMinDateTime) {
+                        orderDateInput.value = currentMinDateTime;
+                    }
+                }, 60000); // Update every minute
+                
+                // Validate on change
+                orderDateInput.addEventListener('change', function() {
+                    const selectedValue = this.value;
+                    const currentMinDateTime = getCurrentDateTime();
+                    
+                    if (selectedValue && selectedValue < currentMinDateTime) {
+                        alert('Order date and time cannot be in the past. Please select the current time or a future date/time.');
+                        this.value = currentMinDateTime;
+                    }
+                });
+                
+                // Validate on input
+                orderDateInput.addEventListener('input', function() {
+                    const selectedValue = this.value;
+                    const currentMinDateTime = getCurrentDateTime();
+                    
+                    if (selectedValue && selectedValue < currentMinDateTime) {
+                        this.setCustomValidity('Order date and time cannot be in the past.');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

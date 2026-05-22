@@ -1,0 +1,452 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Activity Logs - Admin{% endblock %}
+
+{% block page_title %}Activity Logs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .logs-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .logs-filter-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .logs-filter-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .logs-filter-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2b2b2b;
+        }
+
+        .logs-filter-header i {
+            font-size: 1.5rem;
+            color: #8f5644;
+        }
+
+        .logs-filter-form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            align-items: end;
+        }
+
+        .logs-filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logs-filter-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2b2b2b;
+            font-size: 0.9rem;
+        }
+
+        .logs-filter-group select,
+        .logs-filter-group input[type="date"] {
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .logs-filter-group select:focus,
+        .logs-filter-group input[type="date"]:focus {
+            outline: none;
+            border-color: #8f5644;
+            box-shadow: 0 0 0 3px rgba(105, 62, 48, 0.1);
+        }
+
+        .logs-filter-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .logs-filter-actions button[form] {
+            margin: 0;
+        }
+
+        .logs-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .logs-btn-primary {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(105, 62, 48, 0.2);
+        }
+
+        .logs-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .logs-btn-secondary {
+            background: #6c757d;
+            color: white;
+            box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2);
+        }
+
+        .logs-btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+
+        .logs-table-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .logs-table thead {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+        }
+
+        .logs-table th {
+            padding: 1.25rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logs-table tbody tr {
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s ease;
+        }
+
+        .logs-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .logs-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .logs-table td {
+            padding: 1.25rem 1rem;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            color: #2b2b2b;
+        }
+
+        .logs-user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .logs-user-name {
+            font-weight: 600;
+            color: #2b2b2b;
+        }
+
+        .logs-user-email {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .logs-action-badge {
+            display: inline-block;
+            padding: 0.4rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logs-action-badge-create {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .logs-action-badge-update {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .logs-action-badge-delete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .logs-action-badge-login {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .logs-action-badge-logout {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .logs-entity-info {
+            font-weight: 500;
+            color: #2b2b2b;
+        }
+
+        .logs-entity-id {
+            color: #6c757d;
+            font-weight: normal;
+        }
+
+        .logs-description {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .logs-ip-address {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .logs-timestamp {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .logs-view-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logs-view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .logs-empty {
+            padding: 3rem;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .logs-empty i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+
+        .logs-empty p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .logs-filter-form {
+                grid-template-columns: 1fr;
+            }
+
+            .logs-filter-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .logs-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logs-table {
+                font-size: 0.85rem;
+            }
+
+            .logs-table th,
+            .logs-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1200px) {
+            .logs-filter-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .logs-filter-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="logs-container">
+    <div class="logs-filter-card">
+        <div class="logs-filter-header">
+            <i class="bi bi-funnel"></i>
+            <h3>Filter Logs</h3>
+        </div>
+        <form method="get" class="logs-filter-form" id="logs-filter-form">
+            <div class="logs-filter-group">
+                <label for="user">User</label>
+                <select name="user" id="user">
+                    <option value="">All Users</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}" {% if current_filters.user == user.id %}selected{% endif %}>{{ user.name }} ({{ user.email }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="logs-filter-group">
+                <label for="action">Action</label>
+                <select name="action" id="action">
+                    <option value="">All Actions</option>
+                    {% for action in actions %}
+                        <option value="{{ action }}" {% if current_filters.action == action %}selected{% endif %}>{{ action }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="logs-filter-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" name="start_date" id="start_date" value="{{ current_filters.start_date }}">
+            </div>
+            <div class="logs-filter-group">
+                <label for="end_date">End Date</label>
+                <input type="date" name="end_date" id="end_date" value="{{ current_filters.end_date }}">
+            </div>
+        </form>
+        <div class="logs-filter-actions">
+            <button type="submit" form="logs-filter-form" class="logs-btn logs-btn-primary">
+                <i class="bi bi-search"></i>
+                Search
+            </button>
+            <a href="{{ path('admin_logs_index') }}" class="logs-btn logs-btn-secondary">
+                <i class="bi bi-x-circle"></i>
+                Clear
+            </a>
+        </div>
+    </div>
+
+    <div class="logs-table-card">
+        <table class="logs-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Description</th>
+                    <th>IP Address</th>
+                    <th>Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td>
+                            <div class="logs-user-info">
+                                <span class="logs-user-name">{{ log.user.name }}</span>
+                                <span class="logs-user-email">{{ log.user.email }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="logs-action-badge 
+                                {% if log.action == 'CREATE' %}logs-action-badge-create
+                                {% elseif log.action == 'UPDATE' %}logs-action-badge-update
+                                {% elseif log.action == 'DELETE' %}logs-action-badge-delete
+                                {% elseif log.action == 'LOGIN' %}logs-action-badge-login
+                                {% elseif log.action == 'LOGOUT' %}logs-action-badge-logout
+                                {% else %}logs-action-badge-logout{% endif %}">
+                                {{ log.action }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="logs-entity-info">
+                                {{ log.entityType }}
+                                {% if log.entityId %}
+                                    <span class="logs-entity-id">#{{ log.entityId }}</span>
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="logs-description" title="{{ log.description }}">
+                                {{ log.description }}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="logs-ip-address">{{ log.ipAddress ?? 'N/A' }}</span>
+                        </td>
+                        <td>
+                            <span class="logs-timestamp">{{ log.createdAt|date('Y-m-d H:i:s') }}</span>
+                        </td>
+                        <td>
+                            <a href="{{ path('admin_logs_show', {'id': log.id}) }}" class="logs-view-btn">
+                                <i class="bi bi-eye"></i>
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="logs-empty">
+                            <i class="bi bi-inbox"></i>
+                            <p>No logs found</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

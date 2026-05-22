@@ -1,0 +1,165 @@
+/* =======================
+   Services Page Table & Buttons
+   ======================= */
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.btn-primary { background-color: #8f5644; }
+.btn-primary:hover { background-color: #3f2a24; }
+.btn-view { background-color: #6c757d; }
+.btn-view:hover { background-color: #5a6268; }
+.btn-edit { background-color: #4a90e2; }
+.btn-edit:hover { background-color: #3571b8; }
+.btn-delete { background-color: #e74c3c; }
+.btn-delete:hover { background-color: #c0392b; }
+
+/* Inline form for delete button */
+.inline-form { display: inline-block; margin: 0; }
+
+/* Actions container (top) */
+.actions { margin-bottom: 1rem; }
+
+/* Table styling */
+#servicesTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+#servicesTable th, #servicesTable td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+#servicesTable th {
+    background-color: #8f5644;
+    color: white;
+}
+
+#servicesTable tbody tr:nth-child(even) { background-color: #f5f3f0; }
+#servicesTable tbody tr:hover { background-color: #e0d6d2; }
+
+/* =======================
+   Bottom Actions Buttons
+   ======================= */
+.actions-bottom {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.actions-bottom .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.actions-bottom .btn-primary { 
+    background-color: #8f5644; 
+    color: #fff; 
+}
+.actions-bottom .btn-primary:hover { 
+    background-color: #3f2a24; 
+}
+
+.actions-bottom .btn-secondary { 
+    background-color: #6B6B6B; 
+    color: #fff; 
+}
+.actions-bottom .btn-secondary:hover { 
+    background-color: #4B4B4B; 
+}
+
+/* =======================
+   DataTables Pagination
+   ======================= */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border: none;
+    padding: 6px 12px;
+    margin: 2px;
+    border-radius: 6px;
+    background-color: #f5f3f0;
+    color: #8f5644 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #8f5644 !important;
+    color: #fff !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .pagination {
+    list-style: none;
+}
+
+/* DataTables Search (Filter) */
+.dataTables_wrapper .dataTables_filter {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0 14px;
+}
+.dataTables_wrapper .dataTables_filter label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #3f2a24;
+}
+.dataTables_wrapper .dataTables_filter input {
+    width: clamp(360px, 42vw, 700px);
+    min-width: 360px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #c9c4c1;
+    background: #fff;
+    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+.dataTables_wrapper .dataTables_filter input:focus {
+    outline: none;
+    border-color: #8f5644;
+    box-shadow: 0 0 0 4px rgba(105,62,48,0.18);
+}
+
+/* Length and info alignment for cleaner header/footer */
+.dataTables_wrapper .dataTables_length { margin: 8px 0; }
+.dataTables_wrapper .dataTables_info { margin: 8px 0; }
+
+@media (max-width: 768px) {
+    .dataTables_wrapper .dataTables_filter { justify-content: stretch; }
+    .dataTables_wrapper .dataTables_filter input { width: 100%; min-width: 0; }
+}
+
+/* Bootstrap 5 renderer support */
+.dataTables_wrapper .dataTables_paginate ul.pagination { list-style: none; padding-left: 0; margin: 8px 0; display: flex; gap: 6px; }
+.dataTables_wrapper .dataTables_paginate .page-item { display: inline-block; }
+.dataTables_wrapper .dataTables_paginate .page-link {
+  border: none;
+  background-color: #f5f3f0;
+  color: #8f5644;
+  border-radius: 999px;
+  padding: 6px 12px;
+  line-height: 1.2;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.dataTables_wrapper .dataTables_paginate .page-link:hover { background-color: #8f5644; color: #fff; }
+.dataTables_wrapper .dataTables_paginate .page-item.active .page-link { background-color: #8f5644; color: #fff; }

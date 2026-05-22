@@ -1,0 +1,321 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit User - Admin{% endblock %}
+
+{% block page_title %}User Management{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .user-form-container {
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+
+        .user-form-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .user-form-header {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+        }
+
+        .user-form-header h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-form-content {
+            padding: 2.5rem;
+        }
+
+        .user-form-section {
+            margin-bottom: 2rem;
+        }
+
+        .user-form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .user-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .user-form-header {
+                padding: 1.5rem;
+            }
+            .user-form-content {
+                padding: 1.5rem;
+            }
+        }
+
+        .user-form-group {
+            margin-bottom: 2rem;
+        }
+
+        .user-form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2b2b2b;
+            font-size: 0.95rem;
+        }
+
+        .user-form-group input[type="text"],
+        .user-form-group input[type="email"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            font-family: inherit;
+        }
+
+        .user-form-group input:focus {
+            outline: none;
+            border-color: #8f5644;
+            box-shadow: 0 0 0 3px rgba(105, 62, 48, 0.15);
+        }
+
+        .user-form-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .user-form-error ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        /* Role checkboxes styling */
+        .roles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            transition: background-color 0.2s ease;
+            border-radius: 6px;
+        }
+
+        .form-check:hover {
+            background-color: #e9ecef;
+        }
+
+        .form-check input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #8f5644;
+            flex-shrink: 0;
+        }
+
+        .form-check label {
+            margin: 0;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        /* Active checkbox styling */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.25rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .checkbox-container:hover {
+            background-color: #e9ecef;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #8f5644;
+            flex-shrink: 0;
+        }
+
+        .checkbox-container label {
+            margin: 0;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .user-form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .user-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-btn-primary {
+            background-color: #8f5644;
+            color: white;
+        }
+
+        .user-btn-primary:hover {
+            background-color: #3f2a24;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .user-btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .user-btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="user-form-container">
+    <div class="user-form-card">
+        <div class="user-form-header">
+            <h2>
+                <i class="bi bi-pencil-square"></i> Edit User
+            </h2>
+        </div>
+
+        <div class="user-form-content">
+            {% if form.vars.submitted and not form.vars.valid %}
+                <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #f5c6cb;">
+                    <strong>Please fix the following errors:</strong>
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            {{ form_start(form, { 'attr': { 'novalidate': 'novalidate' } }) }}
+                <div class="user-form-section">
+                    <div class="user-form-grid">
+                        <div class="user-form-group">
+                            {{ form_label(form.name) }}
+                            {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
+                            {% if form.name.vars.errors|length > 0 %}
+                                <div class="user-form-error">
+                                    {% for error in form.name.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="user-form-group">
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email, { 'attr': {'class': 'form-control'} }) }}
+                            {% if form.email.vars.errors|length > 0 %}
+                                <div class="user-form-error">
+                                    {% for error in form.email.vars.errors %}
+                                        {{ error.message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="user-form-group">
+                        <label style="margin-bottom: 0.75rem;">{{ form.roles.vars.label }}</label>
+                        <div class="roles-container">
+                            {% for child in form.roles %}
+                                <div class="form-check">
+                                    {{ form_widget(child, { 'attr': {'class': 'form-check-input'} }) }}
+                                    {{ form_label(child, null, { 'label_attr': {'class': 'form-check-label'} }) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.roles.vars.errors|length > 0 %}
+                            <div class="user-form-error">
+                                {% for error in form.roles.vars.errors %}
+                                    {{ error.message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="user-form-group">
+                        <div class="checkbox-container">
+                            {{ form_widget(form.isActive, { 'attr': {'class': 'form-check-input'} }) }}
+                            {{ form_label(form.isActive, null, { 'label_attr': {'class': 'form-check-label'} }) }}
+                        </div>
+                        {% if form.isActive.vars.errors|length > 0 %}
+                            <div class="user-form-error">
+                                {% for error in form.isActive.vars.errors %}
+                                    {{ error.message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="user-form-actions">
+                        <button type="submit" class="user-btn user-btn-primary">
+                            <i class="bi bi-check-circle"></i> Update User
+                        </button>
+                        <a href="{{ path('admin_user_index') }}" class="user-btn user-btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+                </div>
+                {{ form_widget(form._token) }}
+            {{ form_end(form, {'render_rest': false}) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

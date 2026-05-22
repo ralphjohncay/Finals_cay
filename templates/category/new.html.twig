@@ -1,0 +1,216 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add New Category{% endblock %}
+
+{% block page_title %}Category{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('form') }}
+    <style>
+        .category-form-container {
+            max-width: 700px;
+            margin: 2rem auto;
+        }
+
+        .category-form-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .category-form-header {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+        }
+
+        .category-form-header h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .category-form-content {
+            padding: 2.5rem;
+        }
+
+        .category-form-section {
+            margin-bottom: 2rem;
+        }
+
+        .category-form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .category-form-group {
+            margin-bottom: 2rem;
+        }
+
+        .category-form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2b2b2b;
+            font-size: 0.95rem;
+        }
+
+        .category-form-group input[type="text"],
+        .category-form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            font-family: inherit;
+        }
+
+        .category-form-group input:focus,
+        .category-form-group textarea:focus {
+            outline: none;
+            border-color: #8f5644;
+            box-shadow: 0 0 0 3px rgba(105, 62, 48, 0.15);
+        }
+
+        .category-form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .category-form-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .category-form-error ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .category-form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .category-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-btn-primary {
+            background-color: #8f5644;
+            color: white;
+        }
+
+        .category-btn-primary:hover {
+            background-color: #3f2a24;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .category-btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .category-btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .category-form-header {
+                padding: 1.5rem;
+            }
+            .category-form-content {
+                padding: 1.5rem;
+            }
+            .category-form-actions {
+                flex-direction: column;
+            }
+            .category-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="category-form-container">
+    <div class="category-form-card">
+        <div class="category-form-header">
+            <h2>
+                <i class="bi bi-plus-circle"></i> Add New Category
+            </h2>
+        </div>
+
+        <div class="category-form-content">
+            {% if form.vars.submitted and not form.vars.valid %}
+                <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #f5c6cb;">
+                    <strong>Please fix the following errors:</strong>
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            {{ form_start(form, { 'attr': { 'novalidate': 'novalidate' } }) }}
+                <div class="category-form-section">
+                    <div class="category-form-group">
+                        {{ form_label(form.name) }}
+                        {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
+                        {% if form.name.vars.errors|length > 0 %}
+                            <div class="category-form-error">
+                                {% for error in form.name.vars.errors %}
+                                    {{ error.message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="category-form-group">
+                        {{ form_label(form.description) }}
+                        {{ form_widget(form.description, { 'attr': {'class': 'form-control'} }) }}
+                        {% if form.description.vars.errors|length > 0 %}
+                            <div class="category-form-error">
+                                {% for error in form.description.vars.errors %}
+                                    {{ error.message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="category-form-actions">
+                        <button type="submit" class="category-btn category-btn-primary">
+                            <i class="bi bi-check-circle"></i> Create Category
+                        </button>
+                        <a href="{{ path('app_category_index') }}" class="category-btn category-btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

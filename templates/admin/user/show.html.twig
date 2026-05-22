@@ -1,0 +1,273 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Details - Admin{% endblock %}
+
+{% block page_title %}User Management{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .user-view-container {
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+
+        .user-view-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .user-view-header {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+        }
+
+        .user-view-header h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-view-content {
+            padding: 2.5rem;
+        }
+
+        .user-view-section {
+            margin-bottom: 2rem;
+        }
+
+        .user-view-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-view-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .user-view-grid {
+                grid-template-columns: 1fr;
+            }
+            .user-view-header {
+                padding: 1.5rem;
+            }
+            .user-view-content {
+                padding: 1.5rem;
+            }
+        }
+
+        .user-view-group {
+            margin-bottom: 2rem;
+        }
+
+        .user-view-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2b2b2b;
+            font-size: 0.95rem;
+        }
+
+        .user-view-value {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+            color: #2b2b2b;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .badge-admin {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-staff {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-customer {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-disabled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .user-view-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .user-view-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-view-btn-primary {
+            background-color: #8f5644;
+            color: white;
+        }
+
+        .user-view-btn-primary:hover {
+            background-color: #3f2a24;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .user-view-btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .user-view-btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .user-view-btn-warning {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .user-view-btn-warning:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .user-view-btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .user-view-btn-info:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="user-view-container">
+    <div class="user-view-card">
+        <div class="user-view-header">
+            <h2>
+                <i class="bi bi-person-circle"></i> User Details
+            </h2>
+        </div>
+
+        <div class="user-view-content">
+            <div class="user-view-section">
+                <div class="user-view-grid">
+                    <div class="user-view-group">
+                        <label>Name</label>
+                        <div class="user-view-value">{{ user.name }}</div>
+                    </div>
+
+                    <div class="user-view-group">
+                        <label>Email</label>
+                        <div class="user-view-value">{{ user.email }}</div>
+                    </div>
+                </div>
+
+                <div class="user-view-group">
+                    <label>Roles</label>
+                    <div class="user-view-value">
+                        {% for role in user.roles %}
+                            {% if role == 'ROLE_ADMIN' %}
+                                <span class="user-badge badge-admin">Admin</span>
+                            {% elseif role == 'ROLE_STAFF' %}
+                                <span class="user-badge badge-staff">Staff</span>
+                            {% elseif role == 'ROLE_USER' %}
+                                <span class="user-badge badge-customer">Customer</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="user-view-grid">
+                    <div class="user-view-group">
+                        <label>Status</label>
+                        <div class="user-view-value">
+                            <span class="user-badge {% if user.isActive %}badge-active{% else %}badge-disabled{% endif %}">
+                                {{ user.isActive ? 'Active' : 'Disabled' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="user-view-group">
+                        <label>Created At</label>
+                        <div class="user-view-value">{{ user.createdAt ? user.createdAt|date('M d, Y H:i') : 'N/A' }}</div>
+                    </div>
+                </div>
+
+                <div class="user-view-actions">
+                    <a href="{{ path('admin_user_edit', {'id': user.id}) }}" class="user-view-btn user-view-btn-primary">
+                        <i class="bi bi-pencil-square"></i> Edit User
+                    </a>
+                    {% if app.user and app.user.id != user.id %}
+                        <form method="post" action="{{ path('admin_user_reset_password', {'id': user.id}) }}" style="display: inline; margin: 0;" onsubmit="return confirm('Are you sure you want to reset the password for {{ user.email }}? A temporary password will be generated.');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('reset_password' ~ user.id) }}">
+                            <button type="submit" class="user-view-btn user-view-btn-info">
+                                <i class="bi bi-key"></i> Reset Password
+                            </button>
+                        </form>
+                        <form method="post" action="{{ path('admin_user_toggle_status', {'id': user.id}) }}" style="display: inline; margin: 0;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ user.id) }}">
+                            <button type="submit" class="user-view-btn user-view-btn-warning">
+                                <i class="bi bi-{% if user.isActive %}toggle-on{% else %}toggle-off{% endif %}"></i>
+                                {{ user.isActive ? 'Disable' : 'Enable' }}
+                            </button>
+                        </form>
+                    {% endif %}
+                    <a href="{{ path('admin_user_index') }}" class="user-view-btn user-view-btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

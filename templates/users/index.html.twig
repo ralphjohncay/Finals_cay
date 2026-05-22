@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Customer Management{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {# Include compiled CSS via Webpack Encore #}
+    {{ encore_entry_link_tags('usersindex') }}
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>Customers</h2>
+
+    <div class="actions">
+        <a href="{{ path('user_new') }}" class="btn btn-primary">+ Add Customer</a>
+    </div>
+
+    <table id="customersTable" class="table table-striped table-hover table-bordered display nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Roles</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if users is not empty %}
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>
+                            {% for role in user.roles %}
+                                <span class="badge">{{ role|replace({'ROLE_':''})|capitalize }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>{{ user.createdAt ? user.createdAt|date('Y-m-d H:i') : '—' }}</td>
+                        <td>
+                            <a href="{{ path('user_show', {'id': user.id}) }}" class="btn btn-view btn-sm">View</a>
+                            <a href="{{ path('user_edit', {'id': user.id}) }}" class="btn btn-edit btn-sm">Edit</a>
+                            <form method="post" action="{{ path('user_delete', {'id': user.id}) }}" class="inline-form" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this customer? This action cannot be undone.');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button type="submit" class="btn btn-delete btn-sm" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 20px;">No customers found</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <div class="actions-bottom">
+        <a href="{{ app.request.headers.get('referer') ?: path('app_home') }}" class="btn btn-secondary">&larr; Back</a>
+        <a href="{{ path('app_order_new') }}" class="btn btn-primary">+ Add New Order</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Include compiled JS via Webpack Encore #}
+    {{ encore_entry_script_tags('usersindex') }}
+{% endblock %}

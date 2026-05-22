@@ -1,0 +1,378 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('orderindex') }}
+    <style>
+        .order-index-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .order-index-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .order-index-header h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #3f2a24;
+        }
+
+        .order-index-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .order-index-actions form {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .order-index-actions select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: white;
+            color: #2b2b2b;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .order-index-actions select:hover {
+            border-color: #8f5644;
+        }
+        
+        .order-index-actions select:focus {
+            border-color: #8f5644;
+            box-shadow: 0 0 0 3px rgba(105, 62, 48, 0.1);
+        }
+        
+        .order-index-actions label {
+            font-weight: 600;
+            color: #2b2b2b;
+            font-size: 0.9rem;
+        }
+
+        .order-add-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(105, 62, 48, 0.2);
+        }
+
+        .order-add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .order-table-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-table thead {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+        }
+
+        .order-table th {
+            padding: 1.25rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-table tbody tr {
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s ease;
+        }
+
+        .order-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .order-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .order-table td {
+            padding: 1.25rem 1rem;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            color: #2b2b2b;
+        }
+
+        .order-status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-status-pending-approval {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .order-status-pending {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .order-status-approved {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .order-status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .order-status-canceled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .order-action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .order-action-btn-view {
+            background: #2b2b2b;
+            color: white;
+        }
+
+        .order-action-btn-view:hover {
+            background: #1a1a1a;
+            transform: translateY(-2px);
+        }
+
+        .order-action-btn-edit {
+            background: #667eea;
+            color: white;
+        }
+
+        .order-action-btn-edit:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .order-action-btn-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .order-action-btn-approve:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .order-action-btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .order-action-btn-reject:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .order-action-btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .order-action-btn-delete:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .order-empty {
+            padding: 3rem;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .order-empty i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+
+        @media (max-width: 768px) {
+            .order-index-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .order-actions {
+                flex-direction: column;
+            }
+
+            .order-action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="order-index-container">
+    <div class="order-index-header">
+        <h2>Orders</h2>
+        <div class="order-index-actions">
+            <form method="GET" action="{{ path('app_order_index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-right: 1rem;">
+                <label for="sort-order" style="font-weight: 600; color: #2b2b2b; font-size: 0.9rem;">Sort by Date:</label>
+                <select name="sort" id="sort-order" onchange="this.form.submit()" style="padding: 0.5rem 1rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; background: white; color: #2b2b2b; cursor: pointer; outline: none; transition: all 0.3s ease;">
+                    <option value="desc" {% if current_sort == 'desc' %}selected{% endif %}>Newest First</option>
+                    <option value="asc" {% if current_sort == 'asc' %}selected{% endif %}>Oldest First</option>
+                </select>
+            </form>
+            <a href="{{ path('app_order_new') }}" class="order-add-btn">
+                <i class="bi bi-plus-circle"></i>
+                Add New Order
+            </a>
+        </div>
+    </div>
+
+    <div class="order-table-card">
+        <table class="order-table" id="ordersTable">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Order Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td><strong>#{{ order.id }}</strong></td>
+                        <td>{{ order.customer ? order.customer.name : 'N/A' }}</td>
+                        <td><strong>₱{{ order.totalPrice|default('0.00') }}</strong></td>
+                        <td>
+                            <span class="order-status-badge 
+                                {% if order.status == 'pending_approval' %}order-status-pending-approval
+                                {% elseif order.status == 'pending' %}order-status-pending
+                                {% elseif order.status == 'approved' %}order-status-approved
+                                {% elseif order.status == 'completed' %}order-status-completed
+                                {% elseif order.status == 'canceled' %}order-status-canceled
+                                {% else %}order-status-pending-approval{% endif %}">
+                                {{ order.status|replace({'_': ' '})|title }}
+                            </span>
+                        </td>
+                        <td>{{ order.orderDate ? order.orderDate|date('Y-m-d H:i') : 'N/A' }}</td>
+                        <td>
+                            <div class="order-actions">
+                                <a href="{{ path('app_order_show', {id: order.id}) }}" class="order-action-btn order-action-btn-view" title="View">
+                                    <i class="bi bi-eye"></i>
+                                    View
+                                </a>
+                                {% if order.status != 'approved' and order.status != 'completed' and order.status != 'canceled' %}
+                                    <a href="{{ path('app_order_edit', {id: order.id}) }}" class="order-action-btn order-action-btn-edit" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                        Edit
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('ROLE_ADMIN') and order.status == 'pending_approval' %}
+                                    <form action="{{ path('app_order_approve', {'id': order.id}) }}" method="POST" style="display: inline; margin: 0;" onsubmit="return confirm('Are you sure you want to approve order #{{ order.id }}?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('approve' ~ order.id) }}">
+                                        <button type="submit" class="order-action-btn order-action-btn-approve" title="Approve">
+                                            <i class="bi bi-check-circle"></i>
+                                            Approve
+                                        </button>
+                                    </form>
+                                    <form action="{{ path('app_order_reject', {'id': order.id}) }}" method="POST" style="display: inline; margin: 0;" onsubmit="return confirm('Are you sure you want to reject order #{{ order.id }}?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('reject' ~ order.id) }}">
+                                        <button type="submit" class="order-action-btn order-action-btn-reject" title="Reject">
+                                            <i class="bi bi-x-circle"></i>
+                                            Reject
+                                        </button>
+                                    </form>
+                                {% endif %}
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <form action="{{ path('app_order_delete', {'id': order.id}) }}" method="POST" style="display: inline; margin: 0;" onsubmit="return confirm('Are you sure you want to delete order #{{ order.id }}?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
+                                        <button type="submit" class="order-action-btn order-action-btn-delete" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="order-empty">
+                            <i class="bi bi-inbox"></i>
+                            <p>No orders found</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# DataTables removed - using custom table design #}
+{% endblock %}

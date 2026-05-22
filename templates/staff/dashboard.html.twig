@@ -1,0 +1,388 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Staff Dashboard - Shoes Admin{% endblock %}
+
+{% block page_title %}Staff Dashboard{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            color: white;
+            box-shadow: 0 4px 16px rgba(105, 62, 48, 0.3);
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dashboard-header p {
+            margin: 0;
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--stat-color);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            background: var(--stat-bg);
+            color: var(--stat-color);
+        }
+
+        .stat-card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .stat-card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2b2b2b;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .stat-card-subtitle {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+
+        .stat-card-orders {
+            --stat-color: #8f5644;
+            --stat-bg: rgba(105, 62, 48, 0.1);
+        }
+
+        .stat-card-pending {
+            --stat-color: #b8926a;
+            --stat-bg: rgba(184, 146, 106, 0.14);
+        }
+
+        .stat-card-completed {
+            --stat-color: #7d6a58;
+            --stat-bg: rgba(125, 106, 88, 0.12);
+        }
+
+        .stat-card-products {
+            --stat-color: #c49a78;
+            --stat-bg: rgba(157, 122, 90, 0.1);
+        }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .dashboard-section {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+        }
+
+        .dashboard-section-header {
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            padding: 1.5rem 2rem;
+            color: white;
+        }
+
+        .dashboard-section-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dashboard-section-content {
+            padding: 2rem;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table thead {
+            background: #f8f9fa;
+        }
+
+        .orders-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .orders-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .orders-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .orders-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .orders-table td {
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #2b2b2b;
+            vertical-align: middle;
+        }
+
+        .order-status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-status-pending-approval {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .order-status-approved {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .order-status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .order-status-canceled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .view-all-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .quick-action-btn {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(138deg, #e6d2b8 0%, #b88968 32%, #7d4a3a 68%, #3d221c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(105, 62, 48, 0.2);
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(105, 62, 48, 0.3);
+        }
+
+        .quick-action-btn i {
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-section-content {
+                padding: 1rem;
+            }
+
+            .orders-table {
+                font-size: 0.85rem;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>
+            <i class="bi bi-person-badge"></i>
+            Welcome, {{ user.name }}!
+        </h1>
+        <p>Here's an overview of your orders and activities</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card stat-card-orders">
+            <div class="stat-card-header">
+                <div>
+                    <p class="stat-card-title">Total Orders</p>
+                    <p class="stat-card-value">{{ my_total_orders }}</p>
+                    <p class="stat-card-subtitle">All time</p>
+                </div>
+                <div class="stat-card-icon">
+                    <i class="bi bi-cart"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-card-pending">
+            <div class="stat-card-header">
+                <div>
+                    <p class="stat-card-title">Pending Approval</p>
+                    <p class="stat-card-value">{{ my_pending_approval_orders }}</p>
+                    <p class="stat-card-subtitle">Waiting for admin</p>
+                </div>
+                <div class="stat-card-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="dashboard-section">
+            <div class="dashboard-section-header">
+                <h2>
+                    <i class="bi bi-lightning-charge"></i> Quick Actions
+                </h2>
+            </div>
+            <div class="dashboard-section-content">
+                <div class="quick-actions">
+                    <a href="{{ path('app_order_new') }}" class="quick-action-btn">
+                        <i class="bi bi-cart-plus"></i>
+                        Create New Order
+                    </a>
+                    <a href="{{ path('app_order_index') }}" class="quick-action-btn">
+                        <i class="bi bi-list-ul"></i>
+                        View All Orders
+                    </a>
+                    <a href="{{ path('app_product_index') }}" class="quick-action-btn">
+                        <i class="bi bi-box"></i>
+                        Browse Products
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
