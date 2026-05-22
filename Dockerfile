@@ -28,8 +28,6 @@ WORKDIR /app
 COPY package.json package-lock.json webpack.config.js ./
 COPY assets ./assets
 
-# Do NOT set NODE_ENV=production before npm ci
-# because Webpack Encore is usually in devDependencies.
 RUN npm ci
 RUN npm run build
 
@@ -52,12 +50,15 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
+# Add Composer to runtime because we use composer dump-autoload below
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 COPY . .
 COPY --from=vendor /app/vendor ./vendor
 COPY --from=assets /app/public/build ./public/build
 
 RUN composer dump-autoload --classmap-authoritative --no-dev \
-    && mkdir -p var/cache var/log public/uploads/products \
+    && mkdir -p var/cache var/log public/uploads/products config/jwt \
     && chmod +x docker/entrypoint.sh bin/console
 
 ENV PORT=8080
