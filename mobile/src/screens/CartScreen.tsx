@@ -13,16 +13,15 @@ import type { RootStackParamList } from '../navigation';
 type Props = NativeStackScreenProps<RootStackParamList, 'Cart'>;
 
 export function CartScreen({ navigation }: Props) {
-  const { token, customerIri } = useAuth();
+  const { token } = useAuth();
   const { lines, total, toOrderItems, clear, removeLine } = useCart();
   const [submitting, setSubmitting] = useState(false);
 
   const checkout = async () => {
-    if (!token || !customerIri || lines.length === 0) return;
+    if (!token || lines.length === 0) return;
     setSubmitting(true);
     try {
       await createOrder(token, {
-        customer: customerIri,
         orderItems: toOrderItems(),
       });
       clear();

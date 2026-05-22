@@ -24,18 +24,27 @@ class AdminUserController extends AbstractController
     #[Route('/', name: 'admin_user_index', methods: ['GET'])]
     public function index(UsersRepository $usersRepository, Request $request): Response
     {
-        // Only show admin and staff users
-        $qb = $usersRepository->createQueryBuilder('u');
-        $qb->where('u.roles LIKE :admin OR u.roles LIKE :staff')
+        // Staff/admin accounts (website back-office)
+        $staffAdmins = $usersRepository->createQueryBuilder('u')
+            ->where('u.roles LIKE :admin OR u.roles LIKE :staff')
             ->setParameter('admin', '%ROLE_ADMIN%')
-            ->setParameter('staff', '%ROLE_STAFF%');
-        
-        $users = $qb->orderBy('u.createdAt', 'DESC')
+            ->setParameter('staff', '%ROLE_STAFF%')
+            ->orderBy('u.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        // Customers registered via website or mobile API (ROLE_USER, same users table)
+        $customers = $usersRepository->createQueryBuilder('u')
+            ->where('u.roles NOT LIKE :admin AND u.roles NOT LIKE :staff')
+            ->setParameter('admin', '%ROLE_ADMIN%')
+            ->setParameter('staff', '%ROLE_STAFF%')
+            ->orderBy('u.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
 
         return $this->render('admin/user/index.html.twig', [
-            'users' => $users,
+            'users' => $staffAdmins,
+            'customers' => $customers,
         ]);
     }
 

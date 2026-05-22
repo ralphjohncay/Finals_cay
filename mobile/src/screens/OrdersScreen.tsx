@@ -8,8 +8,9 @@ import {
   View,
 } from 'react-native';
 import { ScreenHeader } from '../components/ScreenHeader';
-import { fetchOrders } from '../api/catalog';
+import { fetchMyOrders } from '../api/catalog';
 import { useAuth } from '../context/AuthContext';
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import type { Order } from '../api/types';
 import { colors, radius, spacing } from '../theme';
 
@@ -29,8 +30,10 @@ export function OrdersScreen() {
 
   const load = useCallback(async () => {
     if (!token) return;
-    setOrders(await fetchOrders(token));
+    setOrders(await fetchMyOrders(token));
   }, [token]);
+
+  useRefreshOnFocus(load);
 
   React.useEffect(() => {
     load()
@@ -48,7 +51,7 @@ export function OrdersScreen() {
 
   return (
     <View style={styles.root}>
-      <ScreenHeader title="My Orders" subtitle="From /api/orders" />
+      <ScreenHeader title="My Orders" subtitle="GET /api/orders/mine — shared Railway DB" />
       <FlatList
         data={orders}
         keyExtractor={(item) => String(item.id)}
@@ -78,7 +81,7 @@ export function OrdersScreen() {
               </Text>
             </View>
             <Text style={styles.meta}>
-              {new Date(item.orderDate).toLocaleString()} · ${item.totalPrice}
+              {item.orderDate ? new Date(item.orderDate).toLocaleString() : '—'} · ${item.totalPrice}
             </Text>
           </View>
         )}

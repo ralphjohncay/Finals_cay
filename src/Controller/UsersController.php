@@ -22,10 +22,19 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UsersController extends AbstractController
 {
     #[Route('/', name: 'user_index', methods: ['GET'])]
-    public function index(): Response
+    public function index(UsersRepository $usersRepository): Response
     {
-        // Redirect to admin user management page (staff and admin only)
-        return $this->redirectToRoute('admin_user_index');
+        $customers = $usersRepository->createQueryBuilder('u')
+            ->where('u.roles NOT LIKE :admin AND u.roles NOT LIKE :staff')
+            ->setParameter('admin', '%ROLE_ADMIN%')
+            ->setParameter('staff', '%ROLE_STAFF%')
+            ->orderBy('u.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('users/index.html.twig', [
+            'users' => $customers,
+        ]);
     }
 
     #[Route('/new', name: 'user_new', methods: ['GET', 'POST'])]

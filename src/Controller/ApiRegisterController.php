@@ -96,11 +96,12 @@ class ApiRegisterController extends AbstractController
 
         $response = $this->json([
             'success' => true,
-            'message' => 'Registration successful. You can sign in now.',
+            'message' => 'Registration successful',
             'user' => [
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
                 'name' => $user->getName(),
+                'roles' => $user->getRoles(),
                 'isVerified' => $user->isVerified(),
             ],
             'verification' => [

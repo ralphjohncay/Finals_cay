@@ -2,21 +2,23 @@
 
 namespace App\Doctrine;
 
-use App\Entity\Orders;
-use App\Entity\Users;
 use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
+use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use App\Entity\Orders;
+use App\Entity\Users;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 
 /**
- * Customers only see their own orders in the API; staff/admin see all (same DB as the admin panel).
+ * Non-admin API users only see their own orders (same rows as website customer orders).
  */
-final class CurrentUserOrdersExtension implements QueryCollectionExtensionInterface
+final class CurrentUserOrdersExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
-    public function __construct(private Security $security)
-    {
+    public function __construct(
+        private Security $security,
+    ) {
     }
 
     public function applyToCollection(
@@ -24,9 +26,25 @@ final class CurrentUserOrdersExtension implements QueryCollectionExtensionInterf
         QueryNameGeneratorInterface $queryNameGenerator,
         string $resourceClass,
         ?Operation $operation = null,
-        array $context = []
+        array $context = [],
     ): void {
-        if ($resourceClass !== Orders::class) {
+        $this->restrict($queryBuilder, $resourceClass);
+    }
+
+    public function applyToItem(
+        QueryBuilder $queryBuilder,
+        QueryNameGeneratorInterface $queryNameGenerator,
+        string $resourceClass,
+        array $identifiers,
+        ?Operation $operation = null,
+        array $context = [],
+    ): void {
+        $this->restrict($queryBuilder, $resourceClass);
+    }
+
+    private function restrict(QueryBuilder $queryBuilder, string $resourceClass): void
+    {
+        if (Orders::class !== $resourceClass) {
             return;
         }
 
@@ -41,7 +59,7 @@ final class CurrentUserOrdersExtension implements QueryCollectionExtensionInterf
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->andWhere(sprintf('%s.customer = :currentCustomer', $rootAlias))
-            ->setParameter('currentCustomer', $user);
+            ->andWhere(sprintf('%s.customer = :currentUser', $rootAlias))
+            ->setParameter('currentUser', $user);
     }
 }

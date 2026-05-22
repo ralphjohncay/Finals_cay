@@ -59,7 +59,19 @@ security:
         - { path: ^/health, roles: PUBLIC_ACCESS }
         - { path: ^/product , roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/register, roles: PUBLIC_ACCESS }    
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/verify-email, roles: PUBLIC_ACCESS }
+        - { path: ^/api/products, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/services, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/categories, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/orders/checkout, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/my-orders, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/orders/mine, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/orders/user, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/orders$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
+        - { path: ^/api/me, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/connect/google, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
