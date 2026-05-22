@@ -6,7 +6,7 @@ WORKDIR /app
 COPY composer.json composer.lock symfony.lock ./
 
 ENV APP_ENV=prod
-ENV APP_SECRET=build-time-secret-not-used-at-runtime
+
 ENV DATABASE_URL="mysql://build:build@127.0.0.1:3306/build?serverVersion=8.0.32&charset=utf8mb4"
 
 RUN composer install \
