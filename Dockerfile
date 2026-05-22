@@ -5,10 +5,6 @@ WORKDIR /app
 
 COPY composer.json composer.lock symfony.lock ./
 
-ENV APP_ENV=prod
-
-ENV DATABASE_URL="mysql://build:build@127.0.0.1:3306/build?serverVersion=8.0.32&charset=utf8mb4"
-
 RUN composer install \
     --no-dev \
     --prefer-dist \
@@ -49,8 +45,7 @@ RUN composer dump-autoload --classmap-authoritative --no-dev \
     && mkdir -p var/cache var/log public/uploads/products \
     && chmod +x docker/entrypoint.sh bin/console
 
-ENV APP_ENV=prod
-ENV APP_DEBUG=0
+ENV PORT=8080
 
 EXPOSE 8080
 
