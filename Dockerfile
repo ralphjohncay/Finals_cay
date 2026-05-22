@@ -1,6 +1,10 @@
 # syntax=docker/dockerfile:1
 
+# ==========================================
+# Composer Vendor Stage
+# ==========================================
 FROM composer:2 AS vendor
+
 WORKDIR /app
 
 COPY composer.json composer.lock symfony.lock ./
@@ -13,15 +17,26 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts
 
+
+# ==========================================
+# Assets Build Stage
+# ==========================================
 FROM node:22-alpine AS assets
+
 WORKDIR /app
 
 COPY package.json package-lock.json webpack.config.js ./
 COPY assets ./assets
 
-ENV NODE_ENV=production
-RUN npm ci && npm run build
+# Do NOT set NODE_ENV=production before npm ci
+# because Webpack Encore is usually in devDependencies.
+RUN npm ci
+RUN npm run build
 
+
+# ==========================================
+# Runtime Stage
+# ==========================================
 FROM php:8.2-cli-alpine AS runtime
 
 RUN apk add --no-cache \
