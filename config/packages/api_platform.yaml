@@ -1,7 +1,26 @@
 api_platform:
-    title: Hello API Platform
+    title: RALPHS Footwear API
     version: 1.0.0
+
     defaults:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
+        input_formats:
+            jsonld: ['application/ld+json']
+            json: ['application/json']
+        output_formats:
+            jsonld: ['application/ld+json']
+            json: ['application/json']
+
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+
+    patch_formats:
+        json: ['application/merge-patch+json']
+
+    docs_formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        html: ['text/html']
