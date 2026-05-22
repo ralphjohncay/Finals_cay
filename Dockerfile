@@ -56,7 +56,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY . .
 COPY --from=vendor /app/vendor ./vendor
 COPY --from=assets /app/public/build ./public/build
-
+RUN printf '%s\n' \
+    'APP_ENV=prod' \
+    'APP_DEBUG=0' \
+    'APP_SECRET=' \
+    'DATABASE_URL=' \
+    > .env
+    
 RUN composer dump-autoload --classmap-authoritative --no-dev \
     && mkdir -p var/cache var/log public/uploads/products config/jwt \
     && chmod +x docker/entrypoint.sh bin/console
