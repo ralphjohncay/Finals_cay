@@ -10,6 +10,17 @@ use App\Entity\Users;
 
 class ApiLoginController extends AbstractController
 {
+    #[Route('/api/login', name: 'api_login_check', methods: ['POST'])]
+    public function loginCheck(): JsonResponse
+    {
+        // This controller should normally never run because the `json_login`
+        // authenticator intercepts POST /api/login and returns the JWT response.
+        return $this->json([
+            'success' => false,
+            'message' => 'This endpoint is handled by API authentication.',
+        ], 501);
+    }
+
     // NOTE: Do not use /api/login here because POST /api/login is handled by json_login (JWT).
     #[Route('/api/login-info', name: 'api_login_info', methods: ['GET'])]
     public function loginInfo(): JsonResponse
