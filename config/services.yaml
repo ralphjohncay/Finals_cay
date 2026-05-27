@@ -26,3 +26,6 @@ services:
         arguments:
             $fromAddress: '%mailer_from_address%'
             $fromName: '%mailer_from_name%'
+
+    App\Security\JwtAuthenticationSuccessHandler:
+        decorates: lexik_jwt_authentication.handler.authentication_success

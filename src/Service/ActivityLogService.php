@@ -39,8 +39,12 @@ class ActivityLogService
             $log->setIpAddress($request->getClientIp());
         }
 
-        $this->em->persist($log);
-        $this->em->flush();
+        try {
+            $this->em->persist($log);
+            $this->em->flush();
+        } catch (\Throwable) {
+            // Never block product/order saves if logging fails (e.g. missing table on Railway).
+        }
     }
 
     public function logLogin(Users $user): void

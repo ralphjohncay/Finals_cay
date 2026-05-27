@@ -15,10 +15,11 @@ class ApiMeController extends AbstractController
     public function me(#[CurrentUser] ?Users $user): JsonResponse
     {
         if (null === $user) {
-            return $this->json(['message' => 'Unauthorized'], 401);
+            return $this->json(['success' => false, 'message' => 'Unauthorized'], 401);
         }
 
         return $this->json([
+            'success' => true,
             'id' => $user->getId(),
             'email' => $user->getEmail(),
             'name' => $user->getName(),

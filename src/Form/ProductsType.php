@@ -27,11 +27,16 @@ class ProductsType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // Get all categories for the dropdown
-        $categories = $this->categoryRepository->findAll();
         $categoryChoices = [];
-        foreach ($categories as $category) {
-            $categoryChoices[$category->getName()] = $category->getName();
+        try {
+            foreach ($this->categoryRepository->findAll() as $category) {
+                $categoryChoices[$category->getName()] = $category->getName();
+            }
+        } catch (\Throwable) {
+            // categories table may be empty or migrations pending — form still loads
+        }
+        if ($categoryChoices === []) {
+            $categoryChoices['General'] = 'General';
         }
 
         $builder

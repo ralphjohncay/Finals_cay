@@ -64,45 +64,36 @@ class ProductController extends AbstractController
 
         if ($form->isSubmitted()) {
             if (!$form->isValid()) {
-                // Log form errors for debugging
                 foreach ($form->getErrors(true) as $error) {
                     $this->addFlash('danger', $error->getMessage());
                 }
             } else {
-                // Handle file upload
-                /** @var UploadedFile $imageFile */
-                $imageFile = $form->get('imageFile')->getData();
-                if ($imageFile) {
-                    $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $extension = $imageFile->getClientOriginalExtension();
-                    $newFilename = $safeFilename . '-' . uniqid() . '.' . $extension;
+                $uploadError = $this->handleProductImageUpload($form->get('imageFile')->getData(), $product, $slugger);
+                if ($uploadError !== null) {
+                    $this->addFlash('danger', $uploadError);
+                } else {
+                    $this->finalizeProductBeforeSave($product);
 
-                    try {
-                        $imageFile->move(
-                            $this->getParameter('product_images_directory'),
-                            $newFilename
-                        );
-                        $product->setImage($newFilename);
-                    } catch (FileException $e) {
-                        $this->addFlash('danger', 'Error uploading file: ' . $e->getMessage());
+                    $user = $this->getUser();
+                    if ($user instanceof Users) {
+                        $product->setCreatedBy($user);
                     }
-                }
 
-                // Set createdBy to current user
-                $user = $this->getUser();
-                if ($user instanceof Users) {
-                    $product->setCreatedBy($user);
+                    $em->persist($product);
+                    $em->flush();
+
+                    if ($user instanceof Users && $product->getId() !== null) {
+                        $logService->logCreate(
+                            $user,
+                            'Product',
+                            $product->getId(),
+                            "Product: {$product->getName()} (ID: {$product->getId()})"
+                        );
+                    }
+
+                    $this->addFlash('success', 'Product created successfully!');
+                    return $this->redirectToRoute('app_product_index');
                 }
-                
-                $em->persist($product);
-                $em->flush();
-                
-                if ($user instanceof Users) {
-                    $logService->logCreate($user, 'Product', $product->getId(), "Product: {$product->getName()} (ID: {$product->getId()})");
-                }
-                $this->addFlash('success', 'Product created successfully!');
-                return $this->redirectToRoute('app_product_index');
             }
         }
 
@@ -135,40 +126,23 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Handle file upload
-            /** @var UploadedFile $imageFile */
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                // Delete old file if exists
-                if ($oldImage) {
-                    $oldImagePath = $this->getParameter('product_images_directory') . '/' . $oldImage;
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
-                    }
+            $uploadError = $this->handleProductImageUpload(
+                $form->get('imageFile')->getData(),
+                $product,
+                $slugger,
+                $oldImage
+            );
+            if ($uploadError !== null) {
+                $this->addFlash('danger', $uploadError);
+            } else {
+                $this->finalizeProductBeforeSave($product);
+                $em->flush();
+                if ($user instanceof Users) {
+                    $logService->logUpdate($user, 'Product', $product->getId(), "Product: {$product->getName()} (ID: {$product->getId()})");
                 }
-
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $extension = $imageFile->getClientOriginalExtension();
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $extension;
-
-                try {
-                    $imageFile->move(
-                        $this->getParameter('product_images_directory'),
-                        $newFilename
-                    );
-                    $product->setImage($newFilename);
-                } catch (FileException $e) {
-                    $this->addFlash('danger', 'Error uploading file: ' . $e->getMessage());
-                }
+                $this->addFlash('success', 'Product updated successfully!');
+                return $this->redirectToRoute('app_product_index');
             }
-            
-            $em->flush();
-            if ($user instanceof Users) {
-                $logService->logUpdate($user, 'Product', $product->getId(), "Product: {$product->getName()} (ID: {$product->getId()})");
-            }
-            $this->addFlash('success', 'Product updated successfully!');
-            return $this->redirectToRoute('app_product_index');
         }
 
         return $this->render('product/edit.html.twig', [
@@ -219,5 +193,62 @@ class ProductController extends AbstractController
         return $this->render('product/view.html.twig', [
             'product' => $product,
         ]);
+    }
+
+    private function ensureProductImagesDirectory(): string
+    {
+        $dir = (string) $this->getParameter('product_images_directory');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0775, true);
+        }
+
+        return $dir;
+    }
+
+    private function finalizeProductBeforeSave(Products $product): void
+    {
+        $category = $product->getCategory();
+        if ($category === null || trim($category) === '') {
+            $product->setCategory('General');
+        }
+
+        $product->setIsActive(true);
+    }
+
+    /**
+     * @return string|null Error message, or null on success / no file
+     */
+    private function handleProductImageUpload(
+        ?UploadedFile $imageFile,
+        Products $product,
+        SluggerInterface $slugger,
+        ?string $oldImageToDelete = null,
+    ): ?string {
+        if (!$imageFile) {
+            return null;
+        }
+
+        if ($oldImageToDelete) {
+            $oldImagePath = $this->ensureProductImagesDirectory() . '/' . $oldImageToDelete;
+            if (is_file($oldImagePath)) {
+                @unlink($oldImagePath);
+            }
+        }
+
+        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = $originalFilename !== ''
+            ? (string) $slugger->slug($originalFilename)
+            : 'image';
+        $extension = $imageFile->guessExtension() ?: $imageFile->getClientOriginalExtension() ?: 'bin';
+        $newFilename = $safeFilename . '-' . uniqid() . '.' . $extension;
+
+        try {
+            $imageFile->move($this->ensureProductImagesDirectory(), $newFilename);
+            $product->setImage($newFilename);
+        } catch (FileException $e) {
+            return 'Error uploading file: ' . $e->getMessage();
+        }
+
+        return null;
     }
 }

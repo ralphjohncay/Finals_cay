@@ -12,6 +12,7 @@ import { ProductCard } from '../components/ProductCard';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { fetchProducts } from '../api/catalog';
 import { useAuth } from '../context/AuthContext';
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import type { Product } from '../api/types';
 import { colors, spacing } from '../theme';
 import type { RootStackParamList } from '../navigation';
@@ -24,10 +25,11 @@ export function ShopScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
-    if (!token) return;
     const list = await fetchProducts(token);
     setProducts(list);
   }, [token]);
+
+  useRefreshOnFocus(load);
 
   React.useEffect(() => {
     load()
@@ -51,7 +53,10 @@ export function ShopScreen() {
 
   return (
     <View style={styles.root}>
-      <ScreenHeader title="Shop Products" subtitle="Live catalog from /api/products" />
+      <ScreenHeader
+        title="Shop Products"
+        subtitle="Synced with Railway — pull to refresh for latest"
+      />
       <FlatList
         data={products}
         keyExtractor={(item) => String(item.id)}

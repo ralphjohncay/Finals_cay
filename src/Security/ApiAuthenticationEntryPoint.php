@@ -13,6 +13,7 @@ class ApiAuthenticationEntryPoint implements AuthenticationEntryPointInterface
     public function start(Request $request, ?AuthenticationException $authException = null): JsonResponse
     {
         return new JsonResponse([
+            'success' => false,
             'code' => 401,
             'message' => 'JWT Token not found',
             'help' => 'To authenticate: POST to /api/login with {"email": "your@email.com", "password": "your_password"}, then use the returned token in the Authorization header: Bearer <token>',

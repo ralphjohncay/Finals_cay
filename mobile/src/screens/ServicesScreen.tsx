@@ -12,6 +12,7 @@ import { ScreenHeader } from '../components/ScreenHeader';
 import { fetchServices } from '../api/catalog';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import type { Service } from '../api/types';
 import { colors, radius, spacing } from '../theme';
 
@@ -23,9 +24,10 @@ export function ServicesScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
-    if (!token) return;
     setServices(await fetchServices(token));
   }, [token]);
+
+  useRefreshOnFocus(load);
 
   React.useEffect(() => {
     load()
@@ -43,7 +45,7 @@ export function ServicesScreen() {
 
   return (
     <View style={styles.root}>
-      <ScreenHeader title="Services" subtitle="Gift wrap, express handling, and more" />
+      <ScreenHeader title="Services" subtitle="Same data as the website" />
       <FlatList
         data={services}
         keyExtractor={(item) => String(item.id)}

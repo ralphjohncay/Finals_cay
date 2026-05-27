@@ -64,6 +64,15 @@ RUN printf '%s\n' \
     'JWT_PASSPHRASE=' \
     'JWT_SECRET_KEY=' \
     'JWT_PUBLIC_KEY=' \
+    'MESSENGER_TRANSPORT_DSN=' \
+    'CORS_ALLOW_ORIGIN=' \
+    'DEFAULT_URI=' \
+    'MAILER_DSN=' \
+    'MAILER_FROM_ADDRESS=' \
+    'MAILER_FROM_NAME=' \
+    'OAUTH_GOOGLE_CLIENT_ID=' \
+    'OAUTH_GOOGLE_CLIENT_SECRET=' \
+    'OAUTH_GOOGLE_CALLBACK_URL=' \
     > .env
 
 RUN composer dump-autoload --classmap-authoritative --no-dev \

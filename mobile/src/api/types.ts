@@ -58,7 +58,14 @@ export type AuthUser = {
 };
 
 export type LoginResponse = {
+  success?: boolean;
   token: string;
+  user?: {
+    id: number;
+    email: string;
+    name: string;
+    roles: string[];
+  };
 };
 
 export type RegisterResponse = {

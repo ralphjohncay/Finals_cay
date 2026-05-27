@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppButton } from '../components/AppButton';
 import { fetchProduct } from '../api/catalog';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
 import { assetUrl } from '../config';
 import type { Product } from '../api/types';
 import { colors, radius, spacing } from '../theme';
@@ -17,12 +18,19 @@ export function ProductDetailScreen({ route, navigation }: Props) {
   const { addProduct } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
 
-  useEffect(() => {
-    if (!token) return;
-    fetchProduct(token, route.params.id)
-      .then(setProduct)
-      .catch(() => Alert.alert('Error', 'Could not load product'));
+  const load = useCallback(async () => {
+    try {
+      setProduct(await fetchProduct(route.params.id, token));
+    } catch {
+      Alert.alert('Error', 'Could not load product');
+    }
   }, [token, route.params.id]);
+
+  useRefreshOnFocus(load);
+
+  React.useEffect(() => {
+    load();
+  }, [load]);
 
   if (!product) {
     return <View style={styles.root} />;

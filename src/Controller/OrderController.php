@@ -19,21 +19,36 @@ use App\Service\ActivityLogService;
 use App\Entity\Users;
 
 #[Route('/order')]
-#[IsGranted('ROLE_ADMIN')]
 final class OrderController extends AbstractController
 {
     #[Route('/', name: 'app_order_index', methods: ['GET'])]
     public function index(OrderRepository $orderRepository, Request $request): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_USER')) {
+            throw $this->createAccessDeniedException();
+        }
+
         $sortOrder = $request->query->get('sort', 'desc'); // Default to descending (newest first)
         
         // Validate sort order
         if (!in_array($sortOrder, ['asc', 'desc'])) {
             $sortOrder = 'desc';
         }
-        
-        $orders = $orderRepository->createQueryBuilder('o')
-            ->orderBy('o.orderDate', $sortOrder)
+
+        $qb = $orderRepository->createQueryBuilder('o');
+
+        // Users only see their own orders; staff/admin can see all
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
+            $user = $this->getUser();
+            if (!$user instanceof Users) {
+                throw $this->createAccessDeniedException();
+            }
+
+            $qb->andWhere('o.customer = :customer')
+               ->setParameter('customer', $user);
+        }
+
+        $orders = $qb->orderBy('o.orderDate', $sortOrder)
             ->addOrderBy('o.id', $sortOrder)
             ->getQuery()
             ->getResult();
@@ -249,6 +264,10 @@ final class OrderController extends AbstractController
     #[Route('/new', name: 'app_order_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em, ActivityLogService $logService): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_USER')) {
+            throw $this->createAccessDeniedException();
+        }
+
         $order = new Orders();
         $user = $this->getUser();
         
@@ -344,6 +363,13 @@ final class OrderController extends AbstractController
     #[Route('/{id}', name: 'app_order_show', methods: ['GET'])]
     public function show(Orders $order): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
+            $user = $this->getUser();
+            if (!$user instanceof Users || $order->getCustomer() === null || $order->getCustomer()->getId() !== $user->getId()) {
+                throw $this->createAccessDeniedException();
+            }
+        }
+
         return $this->render('order/show.html.twig', [
             'order' => $order,
         ]);
@@ -352,6 +378,13 @@ final class OrderController extends AbstractController
     #[Route('/{id}/edit', name: 'app_order_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Orders $order, EntityManagerInterface $em, ActivityLogService $logService): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
+            $user = $this->getUser();
+            if (!$user instanceof Users || $order->getCustomer() === null || $order->getCustomer()->getId() !== $user->getId()) {
+                throw $this->createAccessDeniedException();
+            }
+        }
+
         // Prevent editing approved, completed, or canceled (rejected) orders
         if (in_array($order->getStatus(), ['approved', 'completed', 'canceled'])) {
             $this->addFlash('error', 'Cannot edit an approved, completed, or rejected order.');
@@ -526,6 +559,11 @@ final class OrderController extends AbstractController
     #[Route('/{id}/delete', name: 'app_order_delete', methods: ['POST'])]
     public function delete(Request $request, Orders $order, EntityManagerInterface $em, ActivityLogService $logService): Response
     {
+        // Only admins can delete orders
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
         if ($this->isCsrfTokenValid('delete' . $order->getId(), $request->request->get('_token'))) {
             $orderId = $order->getId();
             $orderStatus = $order->getStatus();

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}App Notifications{% endblock %}
+{% block page_title %}App Notifications{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+            <h1>Mobile app notifications</h1>
+            <p>Messages shown in the RALPHS mobile app notification bar (same Railway API).</p>
+        </div>
+        <a href="{{ path('admin_notifications_new') }}" class="btn btn-primary" style="padding:10px 18px;border-radius:8px;background:#ff8c00;color:#fff;text-decoration:none;font-weight:600;">+ New notification</a>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+        <thead>
+            <tr style="background:#1a1a1a;color:#fff;text-align:left;">
+                <th style="padding:12px;">Message</th>
+                <th style="padding:12px;">Audience</th>
+                <th style="padding:12px;">Type</th>
+                <th style="padding:12px;">Active</th>
+                <th style="padding:12px;">Schedule</th>
+                <th style="padding:12px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for n in notifications %}
+            <tr style="border-bottom:1px solid #eee;">
+                <td style="padding:12px;">
+                    {% if n.title %}<strong>{{ n.title }}</strong><br>{% endif %}
+                    {{ n.message|length > 80 ? n.message|slice(0, 80) ~ '…' : n.message }}
+                </td>
+                <td style="padding:12px;">{{ n.audience }}</td>
+                <td style="padding:12px;">{{ n.type }}</td>
+                <td style="padding:12px;">{{ n.isActive ? 'Yes' : 'No' }}</td>
+                <td style="padding:12px;font-size:0.85rem;">
+                    From {{ n.startsAt|date('Y-m-d H:i') }}
+                    {% if n.expiresAt %}<br>Until {{ n.expiresAt|date('Y-m-d H:i') }}{% endif %}
+                </td>
+                <td style="padding:12px;">
+                    <a href="{{ path('admin_notifications_edit', {id: n.id}) }}">Edit</a>
+                    <form method="post" action="{{ path('admin_notifications_delete', {id: n.id}) }}" style="display:inline;" onsubmit="return confirm('Delete this notification?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ n.id) }}">
+                        <button type="submit" style="background:none;border:none;color:#c0392b;cursor:pointer;margin-left:8px;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="padding:24px;text-align:center;color:#6c757d;">No notifications yet. Create one to message mobile app users.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-import { API_URL } from '../config';
+import { API_BASE_URL } from '../config/api';
 import type { ApiError } from './types';
 
 export class ApiClientError extends Error {
@@ -28,12 +28,12 @@ export async function apiRequest<T>(
   options: RequestOptions = {},
 ): Promise<T> {
   const { method = 'GET', token, body, headers = {} } = options;
-  const url = path.startsWith('http') ? path : `${API_URL}${path}`;
+  const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
 
   const res = await fetch(url, {
     method,
     headers: {
-      Accept: 'application/ld+json',
+      Accept: 'application/json, application/ld+json',
       ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
