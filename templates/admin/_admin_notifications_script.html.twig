@@ -2,7 +2,6 @@
 <script>
 (function () {
   var POLL_MS = 1000;
-  var PANEL_AUTO_CLOSE_MS = 3000;
   var MAX_ITEMS = 40;
   var CURSOR_KEY = 'adminAlertCursor';
   var LIST_KEY = 'adminNotificationMessages';
@@ -27,7 +26,6 @@
   var markAllBtn = document.getElementById('adminNotifMarkAll');
 
   var items = loadItems();
-  var panelCloseTimer = null;
   var inFlight = false;
   var panelOpen = false;
 
@@ -50,22 +48,6 @@
     } catch (e) {
       /* ignore */
     }
-  }
-
-  function cancelPanelAutoClose() {
-    if (panelCloseTimer) {
-      window.clearTimeout(panelCloseTimer);
-      panelCloseTimer = null;
-    }
-  }
-
-  /** Closes the dropdown only — messages stay in history. */
-  function schedulePanelAutoClose() {
-    cancelPanelAutoClose();
-    panelCloseTimer = window.setTimeout(function () {
-      setPanelOpen(false);
-      panelCloseTimer = null;
-    }, PANEL_AUTO_CLOSE_MS);
   }
 
   function readCursor() {
@@ -168,7 +150,6 @@
       li.querySelector('.admin-notif__item-time').textContent = formatTime(item.at);
 
       li.querySelector('.admin-notif__item-btn').addEventListener('click', function () {
-        cancelPanelAutoClose();
         item.read = true;
         saveItems();
         updateBadge();
@@ -209,9 +190,6 @@
     saveItems();
     updateBadge();
     renderList();
-
-    setPanelOpen(true);
-    schedulePanelAutoClose();
 
     toggle.classList.add('admin-notif__toggle--pulse');
     window.setTimeout(function () {
@@ -273,17 +251,12 @@
       root.classList.add('admin-notif--open');
     } else {
       root.classList.remove('admin-notif--open');
-      cancelPanelAutoClose();
     }
   }
 
   toggle.addEventListener('click', function (e) {
     e.stopPropagation();
-    var willOpen = panel.hidden;
-    setPanelOpen(willOpen);
-    if (willOpen) {
-      cancelPanelAutoClose();
-    }
+    setPanelOpen(panel.hidden);
   });
 
   markAllBtn.addEventListener('click', function (e) {
@@ -299,7 +272,6 @@
 
   panel.addEventListener('click', function (e) {
     e.stopPropagation();
-    cancelPanelAutoClose();
   });
 
   document.addEventListener('click', function (e) {
