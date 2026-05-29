@@ -16,8 +16,14 @@ fi
 mkdir -p var/cache var/log var/sessions public/uploads/products config/jwt
 chmod -R 777 var public/uploads config/jwt 2>/dev/null || true
 
-if [ ! -f config/jwt/private.pem ]; then
-  echo "Generating JWT key pair..."
+# Prefer stable keys from Railway variables (survives redeploys). Otherwise generate once per volume.
+if [ -n "$JWT_PRIVATE_KEY" ] && [ -n "$JWT_PUBLIC_KEY" ]; then
+  printf '%s\n' "$JWT_PRIVATE_KEY" > config/jwt/private.pem
+  printf '%s\n' "$JWT_PUBLIC_KEY" > config/jwt/public.pem
+  chmod 600 config/jwt/private.pem 2>/dev/null || true
+  echo "JWT keys loaded from environment variables."
+elif [ ! -f config/jwt/private.pem ]; then
+  echo "Generating JWT key pair (set JWT_PRIVATE_KEY + JWT_PUBLIC_KEY in Railway to keep tokens valid across deploys)..."
   php bin/console lexik:jwt:generate-keypair --skip-if-exists || true
 fi
 
