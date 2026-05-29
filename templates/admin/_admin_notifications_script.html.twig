@@ -1,0 +1,291 @@
+{# Customer order / login / signup alerts — bell + message list (polls backend, no Firebase). #}
+<script>
+(function () {
+  var POLL_MS = 1000;
+  var MAX_ITEMS = 40;
+  var CURSOR_KEY = 'adminAlertCursor';
+  var LIST_KEY = 'adminNotificationMessages';
+  var alertsUrl = {{ path('admin_live_alerts')|json_encode|raw }};
+
+  var icons = {
+    order: 'bi-cart-check',
+    login: 'bi-box-arrow-in-right',
+    register: 'bi-person-plus',
+  };
+
+  var root = document.getElementById('adminNotifRoot');
+  if (!root) {
+    return;
+  }
+
+  var toggle = document.getElementById('adminNotifToggle');
+  var panel = document.getElementById('adminNotifPanel');
+  var badge = document.getElementById('adminNotifBadge');
+  var listEl = document.getElementById('adminNotifList');
+  var emptyEl = document.getElementById('adminNotifEmpty');
+  var markAllBtn = document.getElementById('adminNotifMarkAll');
+
+  var items = loadItems();
+  var inFlight = false;
+  var panelOpen = false;
+
+  function loadItems() {
+    try {
+      var raw = sessionStorage.getItem(LIST_KEY);
+      if (!raw) {
+        return [];
+      }
+      var parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveItems() {
+    try {
+      sessionStorage.setItem(LIST_KEY, JSON.stringify(items.slice(0, MAX_ITEMS)));
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  function readCursor() {
+    try {
+      var v = sessionStorage.getItem(CURSOR_KEY);
+      return v !== null ? parseInt(v, 10) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeCursor(id) {
+    try {
+      sessionStorage.setItem(CURSOR_KEY, String(id));
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  function unreadCount() {
+    var n = 0;
+    for (var i = 0; i < items.length; i++) {
+      if (!items[i].read) {
+        n++;
+      }
+    }
+    return n;
+  }
+
+  function formatTime(iso) {
+    if (!iso) {
+      return 'Just now';
+    }
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) {
+      return 'Just now';
+    }
+    var diff = Date.now() - d.getTime();
+    if (diff < 60000) {
+      return 'Just now';
+    }
+    if (diff < 3600000) {
+      return Math.floor(diff / 60000) + ' min ago';
+    }
+    if (diff < 86400000) {
+      return Math.floor(diff / 3600000) + ' hr ago';
+    }
+    return d.toLocaleString();
+  }
+
+  function updateBadge() {
+    var count = unreadCount();
+    if (!badge) {
+      return;
+    }
+    if (count > 0) {
+      badge.hidden = false;
+      badge.textContent = count > 99 ? '99+' : String(count);
+      toggle.classList.add('admin-notif__toggle--active');
+    } else {
+      badge.hidden = true;
+      toggle.classList.remove('admin-notif__toggle--active');
+    }
+  }
+
+  function renderList() {
+    if (!listEl || !emptyEl) {
+      return;
+    }
+
+    listEl.innerHTML = '';
+    if (items.length === 0) {
+      emptyEl.style.display = 'block';
+      return;
+    }
+
+    emptyEl.style.display = 'none';
+
+    items.forEach(function (item) {
+      var li = document.createElement('li');
+      li.className = 'admin-notif__item' + (item.read ? '' : ' admin-notif__item--unread');
+      li.setAttribute('data-id', String(item.id));
+
+      var kind = item.kind || 'info';
+      var iconClass = icons[kind] || 'bi-bell';
+
+      li.innerHTML =
+        '<button type="button" class="admin-notif__item-btn">' +
+        '<span class="admin-notif__item-icon admin-notif__item-icon--' + kind + '">' +
+        '<i class="bi ' + iconClass + '"></i></span>' +
+        '<span class="admin-notif__item-body">' +
+        '<span class="admin-notif__item-title"></span>' +
+        '<span class="admin-notif__item-message"></span>' +
+        '<span class="admin-notif__item-time"></span>' +
+        '</span>' +
+        '</button>';
+
+      li.querySelector('.admin-notif__item-title').textContent = item.title || 'Notification';
+      li.querySelector('.admin-notif__item-message').textContent = item.message || '';
+      li.querySelector('.admin-notif__item-time').textContent = formatTime(item.at);
+
+      li.querySelector('.admin-notif__item-btn').addEventListener('click', function () {
+        item.read = true;
+        saveItems();
+        updateBadge();
+        renderList();
+        if (item.url) {
+          window.location.href = item.url;
+        }
+      });
+
+      listEl.appendChild(li);
+    });
+  }
+
+  function addAlert(alert) {
+    if (!alert || typeof alert.id !== 'number') {
+      return;
+    }
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].id === alert.id) {
+        return;
+      }
+    }
+
+    items.unshift({
+      id: alert.id,
+      kind: alert.kind,
+      title: alert.title,
+      message: alert.message,
+      url: alert.url,
+      at: alert.at,
+      read: false,
+    });
+
+    if (items.length > MAX_ITEMS) {
+      items = items.slice(0, MAX_ITEMS);
+    }
+
+    saveItems();
+    updateBadge();
+    renderList();
+
+    if (!panelOpen) {
+      toggle.classList.add('admin-notif__toggle--pulse');
+      window.setTimeout(function () {
+        toggle.classList.remove('admin-notif__toggle--pulse');
+      }, 1200);
+    }
+  }
+
+  function fetchAlerts(since) {
+    var url = alertsUrl;
+    if (since !== null && since !== undefined) {
+      url += (url.indexOf('?') >= 0 ? '&' : '?') + 'since=' + encodeURIComponent(String(since));
+    }
+
+    return fetch(url, {
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      cache: 'no-store',
+    }).then(function (res) {
+      if (!res.ok) {
+        throw new Error('HTTP ' + res.status);
+      }
+      return res.json();
+    });
+  }
+
+  function tick() {
+    if (document.hidden || inFlight) {
+      return;
+    }
+    inFlight = true;
+
+    var cursor = readCursor();
+    fetchAlerts(cursor === null ? null : cursor)
+      .then(function (data) {
+        if (!data || typeof data.cursor !== 'number') {
+          return;
+        }
+        if (Array.isArray(data.alerts)) {
+          data.alerts.forEach(addAlert);
+        }
+        writeCursor(data.cursor);
+      })
+      .catch(function () {
+        /* silent */
+      })
+      .finally(function () {
+        inFlight = false;
+      });
+  }
+
+  function setPanelOpen(open) {
+    panelOpen = open;
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) {
+      root.classList.add('admin-notif--open');
+    } else {
+      root.classList.remove('admin-notif--open');
+    }
+  }
+
+  toggle.addEventListener('click', function (e) {
+    e.stopPropagation();
+    setPanelOpen(panel.hidden);
+  });
+
+  markAllBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    items.forEach(function (item) {
+      item.read = true;
+    });
+    saveItems();
+    updateBadge();
+    renderList();
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!root.contains(e.target)) {
+      setPanelOpen(false);
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && panelOpen) {
+      setPanelOpen(false);
+    }
+  });
+
+  renderList();
+  updateBadge();
+  tick();
+  window.setInterval(tick, POLL_MS);
+})();
+</script>

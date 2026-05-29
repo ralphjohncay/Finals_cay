@@ -80,6 +80,22 @@
         <header class="navbar">
             <h2>{% block page_title %}Dashboard{% endblock %}</h2>
             <div class="navbar-actions">
+                {% if app.user and (is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN')) %}
+                    <div class="admin-notif" id="adminNotifRoot">
+                        <button type="button" class="admin-notif__toggle" id="adminNotifToggle" aria-expanded="false" aria-controls="adminNotifPanel" aria-label="Notifications">
+                            <i class="bi bi-bell" aria-hidden="true"></i>
+                            <span class="admin-notif__badge" id="adminNotifBadge" hidden>0</span>
+                        </button>
+                        <div class="admin-notif__panel" id="adminNotifPanel" hidden>
+                            <div class="admin-notif__panel-head">
+                                <strong>Notifications</strong>
+                                <button type="button" class="admin-notif__mark-all" id="adminNotifMarkAll">Mark all read</button>
+                            </div>
+                            <ul class="admin-notif__list" id="adminNotifList"></ul>
+                            <p class="admin-notif__empty" id="adminNotifEmpty">No notifications yet. New customer orders and sign-ins will appear here.</p>
+                        </div>
+                    </div>
+                {% endif %}
                 {% if app.user %}
                     <div class="user-dropdown">
                         <button class="user-dropdown-toggle" id="userDropdownToggle" type="button">
@@ -131,6 +147,7 @@
     {# Live admin polling — must run after page config in javascripts block #}
     {% if is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN') %}
         {% include 'admin/_live_poll_script.html.twig' %}
+        {% include 'admin/_admin_notifications_script.html.twig' %}
     {% endif %}
     
     {# Password Toggle Script #}

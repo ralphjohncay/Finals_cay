@@ -152,7 +152,8 @@ class SecurityController extends AbstractController
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher,
         EmailVerificationService $emailVerificationService,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        ActivityLogService $logService,
     ): Response
     {
         // If user is already logged in, redirect to home
@@ -181,6 +182,8 @@ class SecurityController extends AbstractController
             try {
                 $em->persist($user);
                 $em->flush();
+
+                $logService->logRegistration($user);
 
                 $verificationUrl = $urlGenerator->generate('app_verify_email', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
                 $emailVerificationService->sendVerificationEmail($user, $verificationUrl);

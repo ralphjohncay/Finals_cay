@@ -49,5 +49,31 @@ class ActivityLogRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @return list<ActivityLog>
+     */
+    public function findSinceId(int $sinceId, int $limit = 50): array
+    {
+        return $this->createQueryBuilder('a')
+            ->leftJoin('a.user', 'u')
+            ->addSelect('u')
+            ->where('a.id > :since')
+            ->setParameter('since', $sinceId)
+            ->orderBy('a.id', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getMaxId(): int
+    {
+        $value = $this->createQueryBuilder('a')
+            ->select('MAX(a.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $value !== null ? (int) $value : 0;
+    }
 }
 

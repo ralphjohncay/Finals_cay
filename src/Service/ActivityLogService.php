@@ -49,7 +49,24 @@ class ActivityLogService
 
     public function logLogin(Users $user): void
     {
-        $this->log($user, 'LOGIN', 'User', $user->getId(), "User: {$user->getEmail()} (ID: {$user->getId()})");
+        $this->log(
+            $user,
+            'LOGIN',
+            'User',
+            $user->getId(),
+            sprintf('Customer signed in: %s', $user->getEmail()),
+        );
+    }
+
+    public function logRegistration(Users $user): void
+    {
+        $this->log(
+            $user,
+            'REGISTER',
+            'User',
+            $user->getId(),
+            sprintf('New customer registered: %s (%s)', $user->getName() ?? 'Customer', $user->getEmail()),
+        );
     }
 
     public function logLogout(Users $user): void

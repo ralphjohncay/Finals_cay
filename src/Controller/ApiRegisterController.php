@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Users;
+use App\Service\ActivityLogService;
 use App\Service\EmailVerificationService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +25,8 @@ class ApiRegisterController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EmailVerificationService $emailVerificationService,
         UrlGeneratorInterface $urlGenerator,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        ActivityLogService $activityLogService,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
         if (!is_array($data)) {
@@ -75,6 +77,7 @@ class ApiRegisterController extends AbstractController
         try {
             $em->persist($user);
             $em->flush();
+            $activityLogService->logRegistration($user);
         } catch (UniqueConstraintViolationException) {
             return $this->json([
                 'success' => false,

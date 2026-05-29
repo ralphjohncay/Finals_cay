@@ -7,7 +7,9 @@ use App\Repository\OrderRepository;
 use App\Repository\ProductsRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\UsersRepository;
+use App\Service\AdminAlertService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -90,6 +92,34 @@ final class AdminLiveController extends AbstractController
             count($recentActivities),
             $recentActivities[0]?->getId() ?? 0,
         ));
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate');
+
+        return $response;
+    }
+
+    #[Route('/admin/live/alerts', name: 'admin_live_alerts', methods: ['GET'])]
+    #[IsGranted('ROLE_STAFF')]
+    public function alerts(Request $request, AdminAlertService $alertService): JsonResponse
+    {
+        if (!$request->query->has('since')) {
+            return $this->json([
+                'cursor' => $alertService->getLatestLogId(),
+                'alerts' => [],
+            ]);
+        }
+
+        $since = max(0, (int) $request->query->get('since'));
+        $alerts = $alertService->getAlertsSince($since);
+        $cursor = $since;
+        foreach ($alerts as $alert) {
+            $cursor = max($cursor, $alert['id']);
+        }
+        $cursor = max($cursor, $alertService->getLatestLogId());
+
+        $response = $this->json([
+            'cursor' => $cursor,
+            'alerts' => $alerts,
+        ]);
         $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate');
 
         return $response;
