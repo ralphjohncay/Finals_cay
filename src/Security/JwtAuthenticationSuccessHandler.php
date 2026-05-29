@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\Users;
+use App\Service\ActivityLogService;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication\AuthenticationSuccessHandler as LexikSuccessHandler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,7 @@ final class JwtAuthenticationSuccessHandler
 {
     public function __construct(
         private LexikSuccessHandler $lexikHandler,
+        private ActivityLogService $logService,
     ) {
     }
 
@@ -28,6 +30,7 @@ final class JwtAuthenticationSuccessHandler
 
         $user = $token->getUser();
         if ($user instanceof Users) {
+            $this->logService->logLogin($user);
             $payload['success'] = true;
             $payload['user'] = [
                 'id' => $user->getId(),

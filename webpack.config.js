@@ -18,6 +18,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('dashboard', './assets/scripts/dashboard.js')     // Imports dashboard.css inside
     .addEntry('orderindex', './assets/scripts/orderindex.js')   // Imports orderindex.css inside
+    .addEntry('admin-live', './assets/scripts/admin-live.js')
     .addEntry('usersindex', './assets/scripts/usersindex.js')   // Imports usersindex.css inside
     .addEntry('orderedit', './assets/scripts/orderedit.js')     // Imports orderedit.css inside
     .addEntry('serviceindex', './assets/scripts/serviceindex.js') // Imports serviceindex.css inside

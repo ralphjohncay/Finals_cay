@@ -1,0 +1,85 @@
+<div class="stats-grid" id="admin-stats-grid">
+    <div class="stat-card stat-card-users">
+        <div class="stat-card-header">
+            <div>
+                <p class="stat-card-title">Total Users</p>
+                <p class="stat-card-value" data-stat="users">{{ total_users }}</p>
+            </div>
+            <div class="stat-card-icon">
+                <i class="bi bi-people"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card stat-card-staff">
+        <div class="stat-card-header">
+            <div>
+                <p class="stat-card-title">Total Staff</p>
+                <p class="stat-card-value" data-stat="staff">{{ total_staff }}</p>
+            </div>
+            <div class="stat-card-icon">
+                <i class="bi bi-person-badge"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card stat-card-products">
+        <div class="stat-card-header">
+            <div>
+                <p class="stat-card-title">Total Products</p>
+                <p class="stat-card-value" data-stat="products">{{ total_products }}</p>
+            </div>
+            <div class="stat-card-icon">
+                <i class="bi bi-box"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card stat-card-orders">
+        <div class="stat-card-header">
+            <div>
+                <p class="stat-card-title">Total Orders</p>
+                <p class="stat-card-value" data-stat="orders">{{ total_orders }}</p>
+            </div>
+            <div class="stat-card-icon">
+                <i class="bi bi-cart"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-content">
+    <div class="dashboard-section">
+        <div class="dashboard-section-header">
+            <h2>
+                <i class="bi bi-clock-history"></i> Recent Activities
+            </h2>
+        </div>
+        <div class="dashboard-section-content">
+            {% if recent_activities|length > 0 %}
+                <table class="activities-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Entity</th>
+                            <th>Description</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-activities-body">
+                        {% include 'admin/_activities_rows.html.twig' %}
+                    </tbody>
+                </table>
+                <a href="{{ path('admin_logs_index') }}" class="view-all-link">
+                    <i class="bi bi-arrow-right"></i> View All Logs
+                </a>
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <p>No recent activities</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

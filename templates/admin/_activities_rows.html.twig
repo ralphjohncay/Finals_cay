@@ -1,0 +1,21 @@
+{% for activity in recent_activities %}
+    <tr>
+        <td>
+            <strong>{{ activity.user.name }}</strong><br>
+            <small style="color: #6c757d;">{{ activity.user.email }}</small>
+        </td>
+        <td>
+            <span class="activity-badge
+                {% if activity.action == 'CREATE' %}activity-badge-create
+                {% elseif activity.action == 'UPDATE' %}activity-badge-update
+                {% elseif activity.action == 'DELETE' %}activity-badge-delete
+                {% elseif activity.action == 'LOGIN' %}activity-badge-login
+                {% else %}activity-badge-default{% endif %}">
+                {{ activity.action }}
+            </span>
+        </td>
+        <td>{{ activity.entityType }} #{{ activity.entityId }}</td>
+        <td>{{ activity.description }}</td>
+        <td>{{ activity.createdAt|date('M d, Y H:i') }}</td>
+    </tr>
+{% endfor %}

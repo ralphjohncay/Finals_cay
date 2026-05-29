@@ -20,6 +20,7 @@ final class ApiOrderFactory
         private EntityManagerInterface $em,
         private ProductsRepository $productsRepository,
         private ServiceRepository $serviceRepository,
+        private ActivityLogService $activityLogService,
     ) {
     }
 
@@ -55,6 +56,13 @@ final class ApiOrderFactory
         $order->recalculateTotal();
         $this->em->persist($order);
         $this->em->flush();
+
+        $this->activityLogService->logCreate(
+            $customer,
+            'Order',
+            (int) $order->getId(),
+            sprintf('Mobile app order #%d — ₱%s', $order->getId(), $order->getTotalPrice() ?? '0.00'),
+        );
 
         return ['order' => $order];
     }
