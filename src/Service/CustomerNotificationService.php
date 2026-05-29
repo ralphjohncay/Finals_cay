@@ -84,34 +84,44 @@ final class CustomerNotificationService
         $name = $product->getName() ?? 'Product';
         $this->notifyCatalog(
             'created',
-            'New product',
-            sprintf('"%s" is now available in the shop.', $name),
+            'Product added',
+            sprintf('"%s" was added to the shop.', $name),
             CustomerNotification::TYPE_SUCCESS,
             'Product',
             (int) $product->getId(),
         );
     }
 
-    public function notifyProductUpdated(Products $product, bool $deactivated = false): void
+    public function notifyProductUpdated(Products $product): void
     {
         if ($product->getId() === null) {
             return;
         }
 
         $name = $product->getName() ?? 'Product';
-        if ($deactivated) {
-            $message = sprintf('"%s" is no longer available.', $name);
-            $type = CustomerNotification::TYPE_WARNING;
-        } else {
-            $message = sprintf('"%s" was updated (price, stock, or details may have changed).', $name);
-            $type = CustomerNotification::TYPE_INFO;
+        $this->notifyCatalog(
+            'updated',
+            'Product updated',
+            sprintf('"%s" was updated (price, stock, or details may have changed).', $name),
+            CustomerNotification::TYPE_INFO,
+            'Product',
+            (int) $product->getId(),
+        );
+    }
+
+    /** Product hidden/deactivated in admin (still in database). */
+    public function notifyProductRemoved(Products $product, bool $deactivated = true): void
+    {
+        if ($product->getId() === null) {
+            return;
         }
 
+        $name = $product->getName() ?? 'Product';
         $this->notifyCatalog(
-            $deactivated ? 'deactivated' : 'updated',
-            $deactivated ? 'Product unavailable' : 'Product updated',
-            $message,
-            $type,
+            $deactivated ? 'deactivated' : 'removed',
+            'Product removed',
+            sprintf('"%s" was removed from the shop.', $name),
+            CustomerNotification::TYPE_WARNING,
             'Product',
             (int) $product->getId(),
         );
