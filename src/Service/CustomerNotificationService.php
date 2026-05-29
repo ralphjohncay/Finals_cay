@@ -48,19 +48,64 @@ final class CustomerNotificationService
         );
     }
 
-    public function notifyOrderUpdated(Orders $order): void
+    public function notifyOrderStatusChanged(
+        Orders $order,
+        ?string $previousStatus,
+        string $newStatus,
+    ): void {
+        if ($previousStatus === $newStatus) {
+            return;
+        }
+
+        match ($newStatus) {
+            'approved' => $this->notifyOrderApproved($order),
+            'canceled' => $this->notifyOrderRejected($order),
+            'completed' => $this->notifyOrderCompleted($order),
+            default => $this->notifyOrderUpdated($order, $previousStatus, $newStatus),
+        };
+    }
+
+    public function notifyOrderCompleted(Orders $order): void
     {
-        $label = self::STATUS_LABELS[$order->getStatus() ?? ''] ?? ($order->getStatus() ?? 'updated');
+        $this->notifyOrder(
+            $order,
+            'completed',
+            'Order completed',
+            sprintf('Your order #%d has been marked as completed.', $order->getId()),
+            CustomerNotification::TYPE_SUCCESS,
+        );
+    }
+
+    public function notifyOrderUpdated(
+        Orders $order,
+        ?string $previousStatus = null,
+        ?string $newStatus = null,
+    ): void {
+        $newStatus ??= $order->getStatus() ?? 'updated';
+        $newLabel = self::STATUS_LABELS[$newStatus] ?? $newStatus;
+
+        if ($previousStatus !== null && $previousStatus !== $newStatus) {
+            $oldLabel = self::STATUS_LABELS[$previousStatus] ?? $previousStatus;
+            $message = sprintf(
+                'Order #%d was updated. Status: %s → %s.',
+                $order->getId(),
+                $oldLabel,
+                $newLabel,
+            );
+        } else {
+            $message = sprintf(
+                'Order #%d was updated by admin. Status: %s.',
+                $order->getId(),
+                $newLabel,
+            );
+        }
+
         $this->notifyOrder(
             $order,
             'updated',
             'Order updated',
-            sprintf(
-                'Order #%d was updated by admin. Status: %s.',
-                $order->getId(),
-                $label,
-            ),
-            CustomerNotification::TYPE_WARNING,
+            $message,
+            CustomerNotification::TYPE_INFO,
         );
     }
 

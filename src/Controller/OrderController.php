@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Service\ActivityLogService;
-use App\Service\CustomerNotificationService;
 use App\Entity\Users;
 
 #[Route('/order')]
@@ -382,7 +381,6 @@ final class OrderController extends AbstractController
         Orders $order,
         EntityManagerInterface $em,
         ActivityLogService $logService,
-        CustomerNotificationService $customerNotifications,
     ): Response
     {
         if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
@@ -487,7 +485,6 @@ final class OrderController extends AbstractController
             if ($user instanceof Users) {
                 $logService->logUpdate($user, 'Order', $order->getId(), "Updated order #{$order->getId()} - Status reset to pending approval");
             }
-            $customerNotifications->notifyOrderUpdated($order);
             $this->addFlash('success', 'Order updated successfully! Status has been reset to pending approval and requires admin approval.');
             return $this->redirectToRoute('app_order_index');
         }
@@ -506,7 +503,6 @@ final class OrderController extends AbstractController
         Orders $order,
         EntityManagerInterface $em,
         ActivityLogService $logService,
-        CustomerNotificationService $customerNotifications,
     ): Response
     {
         if ($this->isCsrfTokenValid('approve' . $order->getId(), $request->request->get('_token'))) {
@@ -529,8 +525,6 @@ final class OrderController extends AbstractController
             if ($user instanceof Users) {
                 $logService->logUpdate($user, 'Order', $order->getId(), "Approved order #{$order->getId()}");
             }
-            $customerNotifications->notifyOrderApproved($order);
-
             $this->addFlash('success', 'Order approved successfully! Stock has been deducted.');
         } else {
             $this->addFlash('error', 'Invalid security token. Please try again.');
@@ -546,7 +540,6 @@ final class OrderController extends AbstractController
         Orders $order,
         EntityManagerInterface $em,
         ActivityLogService $logService,
-        CustomerNotificationService $customerNotifications,
     ): Response
     {
         // Prevent rejecting approved or completed orders
@@ -570,8 +563,6 @@ final class OrderController extends AbstractController
             if ($user instanceof Users) {
                 $logService->logUpdate($user, 'Order', $order->getId(), "Rejected order #{$order->getId()}");
             }
-            $customerNotifications->notifyOrderRejected($order);
-
             $this->addFlash('success', 'Order rejected successfully!');
         }
 
@@ -584,7 +575,6 @@ final class OrderController extends AbstractController
         Orders $order,
         EntityManagerInterface $em,
         ActivityLogService $logService,
-        CustomerNotificationService $customerNotifications,
     ): Response
     {
         // Only admins can delete orders
@@ -601,8 +591,6 @@ final class OrderController extends AbstractController
                 $this->restoreStock($order, $em);
                 $em->flush();
             }
-
-            $customerNotifications->notifyOrderDeleted($order);
 
             $em->remove($order);
             $em->flush();
