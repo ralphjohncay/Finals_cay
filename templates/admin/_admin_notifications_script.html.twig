@@ -243,20 +243,28 @@
       });
   }
 
+  function isPanelOpen() {
+    return panel.classList.contains('is-open');
+  }
+
   function setPanelOpen(open) {
-    panelOpen = open;
-    panel.hidden = !open;
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (open) {
+    panelOpen = !!open;
+    toggle.setAttribute('aria-expanded', panelOpen ? 'true' : 'false');
+
+    if (panelOpen) {
+      panel.classList.add('is-open');
+      panel.removeAttribute('hidden');
       root.classList.add('admin-notif--open');
     } else {
+      panel.classList.remove('is-open');
+      panel.setAttribute('hidden', 'hidden');
       root.classList.remove('admin-notif--open');
     }
   }
 
   toggle.addEventListener('click', function (e) {
     e.stopPropagation();
-    setPanelOpen(panel.hidden);
+    setPanelOpen(!isPanelOpen());
   });
 
   markAllBtn.addEventListener('click', function (e) {
@@ -285,6 +293,8 @@
       setPanelOpen(false);
     }
   });
+
+  setPanelOpen(false);
 
   renderList();
   updateBadge();

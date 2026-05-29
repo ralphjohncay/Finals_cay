@@ -222,10 +222,24 @@ body {
   border-radius: 12px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  display: flex;
+  display: none;
   flex-direction: column;
   overflow: hidden;
   z-index: 200;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.admin-notif__panel.is-open {
+  display: flex;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.admin-notif__panel[hidden] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .admin-notif__panel-head {
