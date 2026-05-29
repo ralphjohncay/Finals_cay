@@ -2,7 +2,7 @@
 <script>
 (function () {
   var POLL_MS = 1000;
-  var AUTO_HIDE_MS = 3000;
+  var PANEL_AUTO_CLOSE_MS = 3000;
   var MAX_ITEMS = 40;
   var CURSOR_KEY = 'adminAlertCursor';
   var LIST_KEY = 'adminNotificationMessages';
@@ -27,7 +27,7 @@
   var markAllBtn = document.getElementById('adminNotifMarkAll');
 
   var items = loadItems();
-  var hideTimers = {};
+  var panelCloseTimer = null;
   var inFlight = false;
   var panelOpen = false;
 
@@ -52,39 +52,20 @@
     }
   }
 
-  function cancelAutoHide(id) {
-    if (hideTimers[id]) {
-      window.clearTimeout(hideTimers[id]);
-      delete hideTimers[id];
+  function cancelPanelAutoClose() {
+    if (panelCloseTimer) {
+      window.clearTimeout(panelCloseTimer);
+      panelCloseTimer = null;
     }
   }
 
-  function removeAlert(id) {
-    cancelAutoHide(id);
-    items = items.filter(function (item) {
-      return item.id !== id;
-    });
-    saveItems();
-    updateBadge();
-    renderList();
-    if (items.length === 0 && panelOpen) {
+  /** Closes the dropdown only — messages stay in history. */
+  function schedulePanelAutoClose() {
+    cancelPanelAutoClose();
+    panelCloseTimer = window.setTimeout(function () {
       setPanelOpen(false);
-    }
-  }
-
-  function scheduleAutoHide(id) {
-    cancelAutoHide(id);
-    hideTimers[id] = window.setTimeout(function () {
-      var li = listEl ? listEl.querySelector('[data-id="' + id + '"]') : null;
-      if (li) {
-        li.classList.add('admin-notif__item--hiding');
-        window.setTimeout(function () {
-          removeAlert(id);
-        }, 280);
-      } else {
-        removeAlert(id);
-      }
-    }, AUTO_HIDE_MS);
+      panelCloseTimer = null;
+    }, PANEL_AUTO_CLOSE_MS);
   }
 
   function readCursor() {
@@ -187,12 +168,14 @@
       li.querySelector('.admin-notif__item-time').textContent = formatTime(item.at);
 
       li.querySelector('.admin-notif__item-btn').addEventListener('click', function () {
-        cancelAutoHide(item.id);
+        cancelPanelAutoClose();
+        item.read = true;
+        saveItems();
+        updateBadge();
+        renderList();
         if (item.url) {
           window.location.href = item.url;
-          return;
         }
-        removeAlert(item.id);
       });
 
       listEl.appendChild(li);
@@ -217,32 +200,23 @@
       url: alert.url,
       at: alert.at,
       read: false,
-      shownAt: Date.now(),
     });
 
     if (items.length > MAX_ITEMS) {
-      items.slice(MAX_ITEMS).forEach(function (dropped) {
-        cancelAutoHide(dropped.id);
-      });
       items = items.slice(0, MAX_ITEMS);
     }
 
     saveItems();
     updateBadge();
     renderList();
-    scheduleAutoHide(alert.id);
 
     setPanelOpen(true);
+    schedulePanelAutoClose();
+
     toggle.classList.add('admin-notif__toggle--pulse');
     window.setTimeout(function () {
       toggle.classList.remove('admin-notif__toggle--pulse');
     }, 1200);
-
-    window.setTimeout(function () {
-      if (panelOpen && items.length === 0) {
-        setPanelOpen(false);
-      }
-    }, AUTO_HIDE_MS + 300);
   }
 
   function fetchAlerts(since) {
@@ -299,20 +273,33 @@
       root.classList.add('admin-notif--open');
     } else {
       root.classList.remove('admin-notif--open');
+      cancelPanelAutoClose();
     }
   }
 
   toggle.addEventListener('click', function (e) {
     e.stopPropagation();
-    setPanelOpen(panel.hidden);
+    var willOpen = panel.hidden;
+    setPanelOpen(willOpen);
+    if (willOpen) {
+      cancelPanelAutoClose();
+    }
   });
 
   markAllBtn.addEventListener('click', function (e) {
     e.stopPropagation();
-    items.slice().forEach(function (item) {
-      removeAlert(item.id);
+    items.forEach(function (item) {
+      item.read = true;
     });
+    saveItems();
+    updateBadge();
+    renderList();
     setPanelOpen(false);
+  });
+
+  panel.addEventListener('click', function (e) {
+    e.stopPropagation();
+    cancelPanelAutoClose();
   });
 
   document.addEventListener('click', function (e) {
@@ -327,16 +314,6 @@
     }
   });
 
-  function purgeExpiredOnLoad() {
-    var now = Date.now();
-    items = items.filter(function (item) {
-      var shownAt = item.shownAt || 0;
-      return now - shownAt < AUTO_HIDE_MS;
-    });
-    saveItems();
-  }
-
-  purgeExpiredOnLoad();
   renderList();
   updateBadge();
   tick();
