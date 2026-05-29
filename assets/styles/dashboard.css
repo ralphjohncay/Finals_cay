@@ -282,6 +282,13 @@ body {
   background: #fffbf0;
 }
 
+.admin-notif__item--hiding {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.28s ease, max-height 0.28s ease;
+}
+
 .admin-notif__item-btn {
   display: flex;
   gap: 12px;
