@@ -1,0 +1,82 @@
+{# Auto-refresh admin tables/stats without full page reload (no Webpack entry required). #}
+<script>
+(function () {
+  var POLL_MS = 3000;
+
+  function initAdminLivePoll() {
+    var roots = document.querySelectorAll('[data-admin-live-url]');
+    if (!roots.length) {
+      return;
+    }
+
+    roots.forEach(function (root) {
+      var url = root.getAttribute('data-admin-live-url');
+      var targetSelector = root.getAttribute('data-admin-live-target');
+      if (!url || !targetSelector) {
+        return;
+      }
+
+      var lastHtml = '';
+      var inFlight = false;
+
+      function refresh() {
+        if (document.hidden || inFlight) {
+          return;
+        }
+        inFlight = true;
+
+        fetch(url, {
+          credentials: 'same-origin',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          cache: 'no-store',
+        })
+          .then(function (res) {
+            if (!res.ok) {
+              throw new Error('HTTP ' + res.status);
+            }
+            return res.text();
+          })
+          .then(function (html) {
+            if (!html || html === lastHtml) {
+              return;
+            }
+            var target = document.querySelector(targetSelector);
+            if (!target) {
+              return;
+            }
+            target.innerHTML = html;
+            lastHtml = html;
+            target.classList.add('admin-live-updated');
+            window.setTimeout(function () {
+              target.classList.remove('admin-live-updated');
+            }, 600);
+          })
+          .catch(function () {
+            /* ignore transient errors */
+          })
+          .finally(function () {
+            inFlight = false;
+          });
+      }
+
+      refresh();
+      window.setInterval(refresh, POLL_MS);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAdminLivePoll);
+  } else {
+    initAdminLivePoll();
+  }
+})();
+</script>
+<style>
+  .admin-live-updated {
+    animation: admin-live-flash 0.6s ease;
+  }
+  @keyframes admin-live-flash {
+    0% { background-color: rgba(255, 140, 0, 0.18); }
+    100% { background-color: transparent; }
+  }
+</style>

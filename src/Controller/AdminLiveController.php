@@ -28,6 +28,8 @@ final class AdminLiveController extends AbstractController
         }
 
         $orders = $orderRepository->createQueryBuilder('o')
+            ->leftJoin('o.customer', 'c')
+            ->addSelect('c')
             ->orderBy('o.orderDate', $sortOrder)
             ->addOrderBy('o.id', $sortOrder)
             ->getQuery()
@@ -36,7 +38,8 @@ final class AdminLiveController extends AbstractController
         $response = $this->render('order/_index_rows.html.twig', [
             'orders' => $orders,
         ]);
-        $response->headers->set('X-Admin-Live', 'orders-' . count($orders));
+        $response->headers->set('X-Admin-Live', $this->ordersFingerprint($orders));
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate');
 
         return $response;
     }
@@ -81,7 +84,13 @@ final class AdminLiveController extends AbstractController
             'total_services' => $totalServices,
             'recent_activities' => $recentActivities,
         ]);
-        $response->headers->set('X-Admin-Live', 'dashboard-' . $totalOrders . '-' . count($recentActivities));
+        $response->headers->set('X-Admin-Live', sprintf(
+            'dashboard-%d-%d-%d',
+            $totalOrders,
+            count($recentActivities),
+            $recentActivities[0]?->getId() ?? 0,
+        ));
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate');
 
         return $response;
     }
@@ -101,8 +110,30 @@ final class AdminLiveController extends AbstractController
         $response = $this->render('admin/_activities_rows.html.twig', [
             'recent_activities' => $activities,
         ]);
-        $response->headers->set('X-Admin-Live', 'activities-' . count($activities));
+        $response->headers->set('X-Admin-Live', 'activities-' . count($activities) . '-' . ($activities[0]?->getId() ?? 0));
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate');
 
         return $response;
+    }
+
+    /**
+     * @param list<\App\Entity\Orders> $orders
+     */
+    private function ordersFingerprint(array $orders): string
+    {
+        if ($orders === []) {
+            return 'orders-0';
+        }
+
+        $parts = [];
+        foreach ($orders as $order) {
+            $parts[] = sprintf(
+                '%d:%s',
+                $order->getId(),
+                $order->getStatus() ?? '',
+            );
+        }
+
+        return 'orders-' . count($orders) . '-' . md5(implode('|', $parts));
     }
 }

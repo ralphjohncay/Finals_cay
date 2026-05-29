@@ -305,11 +305,7 @@
             </tbody>
         </table>
     </div>
-</div>
-{% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
     {% if is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN') %}
         <div
             hidden
@@ -317,4 +313,5 @@
             data-admin-live-target="#orders-table-body"
         ></div>
     {% endif %}
+</div>
 {% endblock %}

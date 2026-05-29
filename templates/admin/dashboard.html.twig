@@ -287,14 +287,11 @@
     <div id="admin-dashboard-live">
         {% include 'admin/_dashboard_live.html.twig' %}
     </div>
-</div>
-{% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
     <div
         hidden
         data-admin-live-url="{{ path('admin_live_dashboard') }}"
         data-admin-live-target="#admin-dashboard-live"
     ></div>
+</div>
 {% endblock %}

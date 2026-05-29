@@ -124,12 +124,14 @@
 
     {# Default global JS bundle from Encore #}
     {{ encore_entry_script_tags('dashboard') }}
-    {% if is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN') %}
-        {{ encore_entry_script_tags('admin-live') }}
-    {% endif %}
 
     {# Page-specific JS (like home.js or usersindex.js) #}
     {% block javascripts %}{% endblock %}
+
+    {# Live admin polling — must run after page config in javascripts block #}
+    {% if is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN') %}
+        {% include 'admin/_live_poll_script.html.twig' %}
+    {% endif %}
     
     {# Password Toggle Script #}
     <script>
