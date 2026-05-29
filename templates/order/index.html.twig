@@ -272,12 +272,7 @@
 {% block content %}
 <div class="order-index-container">
     <div class="order-index-header">
-        <h2>
-            Orders
-            {% if is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN') %}
-                <span id="admin-live-status" aria-live="polite"></span>
-            {% endif %}
-        </h2>
+        <h2>Orders</h2>
         <div class="order-index-actions">
             <form method="GET" action="{{ path('app_order_index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-right: 1rem;">
                 <label for="sort-order" style="font-weight: 600; color: #2b2b2b; font-size: 0.9rem;">Sort by Date:</label>

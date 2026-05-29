@@ -1,7 +1,7 @@
 {# Auto-refresh admin tables/stats without full page reload. #}
 <script>
 (function () {
-  var POLL_MS = 2000;
+  var POLL_MS = 1000;
 
   function isLoginPage(html) {
     return (
@@ -10,22 +10,11 @@
     );
   }
 
-  function setLiveStatus(message, isError) {
-    var el = document.getElementById('admin-live-status');
-    if (!el) {
-      return;
-    }
-    el.textContent = message;
-    el.style.color = isError ? '#b42318' : '#2d6a4f';
-  }
-
   function initAdminLivePoll() {
     var roots = document.querySelectorAll('[data-admin-live-url]');
     if (!roots.length) {
       return;
     }
-
-    setLiveStatus('Live — updating every ' + POLL_MS / 1000 + 's', false);
 
     roots.forEach(function (root) {
       var url = root.getAttribute('data-admin-live-url');
@@ -36,7 +25,6 @@
 
       var lastHtml = '';
       var inFlight = false;
-      var failCount = 0;
 
       function refresh() {
         if (document.hidden || inFlight) {
@@ -63,7 +51,6 @@
               throw new Error('Session expired');
             }
             if (html === lastHtml) {
-              failCount = 0;
               return;
             }
             var target = document.querySelector(targetSelector);
@@ -72,21 +59,13 @@
             }
             target.innerHTML = html;
             lastHtml = html;
-            failCount = 0;
-            setLiveStatus('Live — updated ' + new Date().toLocaleTimeString(), false);
             target.classList.add('admin-live-updated');
             window.setTimeout(function () {
               target.classList.remove('admin-live-updated');
             }, 600);
           })
-          .catch(function (err) {
-            failCount += 1;
-            if (failCount >= 2) {
-              setLiveStatus(
-                'Live sync paused — refresh page or sign in again (' + (err && err.message ? err.message : 'error') + ')',
-                true,
-              );
-            }
+          .catch(function () {
+            /* silent — no visible status label */
           })
           .finally(function () {
             inFlight = false;
@@ -106,29 +85,8 @@
 })();
 </script>
 <style>
-  #admin-live-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-left: 12px;
-    color: #2d6a4f;
-  }
-  #admin-live-status::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #40c057;
-    animation: admin-live-pulse 1.5s ease infinite;
-  }
   .admin-live-updated {
     animation: admin-live-flash 0.6s ease;
-  }
-  @keyframes admin-live-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
   }
   @keyframes admin-live-flash {
     0% { background-color: rgba(255, 140, 0, 0.18); }
