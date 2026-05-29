@@ -59,10 +59,6 @@
             }
             target.innerHTML = html;
             lastHtml = html;
-            target.classList.add('admin-live-updated');
-            window.setTimeout(function () {
-              target.classList.remove('admin-live-updated');
-            }, 600);
           })
           .catch(function () {
             /* silent — no visible status label */
@@ -84,12 +80,3 @@
   }
 })();
 </script>
-<style>
-  .admin-live-updated {
-    animation: admin-live-flash 0.6s ease;
-  }
-  @keyframes admin-live-flash {
-    0% { background-color: rgba(255, 140, 0, 0.18); }
-    100% { background-color: transparent; }
-  }
-</style>
