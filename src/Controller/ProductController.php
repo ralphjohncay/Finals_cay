@@ -15,6 +15,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Service\ActivityLogService;
+use App\Service\CustomerNotificationService;
 use App\Entity\Users;
 
 #[Route('/products')]
@@ -49,7 +50,8 @@ class ProductController extends AbstractController
         Request $request, 
         EntityManagerInterface $em, 
         ActivityLogService $logService,
-        SluggerInterface $slugger
+        CustomerNotificationService $customerNotifications,
+        SluggerInterface $slugger,
     ): Response {
         $product = new Products();
         
@@ -90,6 +92,7 @@ class ProductController extends AbstractController
                             "Product: {$product->getName()} (ID: {$product->getId()})"
                         );
                     }
+                    $customerNotifications->notifyProductCreated($product);
 
                     $this->addFlash('success', 'Product created successfully!');
                     return $this->redirectToRoute('app_product_index');
@@ -108,7 +111,8 @@ class ProductController extends AbstractController
         Request $request, 
         EntityManagerInterface $em, 
         ActivityLogService $logService,
-        SluggerInterface $slugger
+        CustomerNotificationService $customerNotifications,
+        SluggerInterface $slugger,
     ): Response {
         $user = $this->getUser();
         
@@ -120,6 +124,7 @@ class ProductController extends AbstractController
             }
         }
         
+        $wasActive = $product->isActive();
         $oldImage = $product->getImage();
         
         $form = $this->createForm(ProductsType::class, $product);
@@ -140,6 +145,7 @@ class ProductController extends AbstractController
                 if ($user instanceof Users) {
                     $logService->logUpdate($user, 'Product', $product->getId(), "Product: {$product->getName()} (ID: {$product->getId()})");
                 }
+                $customerNotifications->notifyProductUpdated($product, $wasActive && !$product->isActive());
                 $this->addFlash('success', 'Product updated successfully!');
                 return $this->redirectToRoute('app_product_index');
             }
@@ -152,7 +158,13 @@ class ProductController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'app_product_delete', methods: ['POST'])]
-    public function delete(Products $product, Request $request, EntityManagerInterface $em, ActivityLogService $logService): Response
+    public function delete(
+        Products $product,
+        Request $request,
+        EntityManagerInterface $em,
+        ActivityLogService $logService,
+        CustomerNotificationService $customerNotifications,
+    ): Response
     {
         $user = $this->getUser();
         
@@ -177,6 +189,8 @@ class ProductController extends AbstractController
                 }
             }
             
+            $customerNotifications->notifyProductDeleted((int) $productId, (string) $productName);
+
             $em->remove($product);
             $em->flush();
             if ($user instanceof Users) {

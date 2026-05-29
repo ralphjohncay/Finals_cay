@@ -69,6 +69,7 @@ security:
         - { path: ^/api/services, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/categories, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/notifications, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/customer-alerts, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/docs, roles: PUBLIC_ACCESS }
         - { path: ^/api$, roles: PUBLIC_ACCESS }
         - { path: ^/api/orders/checkout, roles: IS_AUTHENTICATED_FULLY }

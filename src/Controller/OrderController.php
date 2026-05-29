@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Service\ActivityLogService;
+use App\Service\CustomerNotificationService;
 use App\Entity\Users;
 
 #[Route('/order')]
@@ -376,7 +377,13 @@ final class OrderController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_order_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Orders $order, EntityManagerInterface $em, ActivityLogService $logService): Response
+    public function edit(
+        Request $request,
+        Orders $order,
+        EntityManagerInterface $em,
+        ActivityLogService $logService,
+        CustomerNotificationService $customerNotifications,
+    ): Response
     {
         if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
             $user = $this->getUser();
@@ -480,6 +487,7 @@ final class OrderController extends AbstractController
             if ($user instanceof Users) {
                 $logService->logUpdate($user, 'Order', $order->getId(), "Updated order #{$order->getId()} - Status reset to pending approval");
             }
+            $customerNotifications->notifyOrderUpdated($order);
             $this->addFlash('success', 'Order updated successfully! Status has been reset to pending approval and requires admin approval.');
             return $this->redirectToRoute('app_order_index');
         }
@@ -493,7 +501,13 @@ final class OrderController extends AbstractController
 
     #[Route('/{id}/approve', name: 'app_order_approve', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function approve(Request $request, Orders $order, EntityManagerInterface $em, ActivityLogService $logService): Response
+    public function approve(
+        Request $request,
+        Orders $order,
+        EntityManagerInterface $em,
+        ActivityLogService $logService,
+        CustomerNotificationService $customerNotifications,
+    ): Response
     {
         if ($this->isCsrfTokenValid('approve' . $order->getId(), $request->request->get('_token'))) {
             // Only approve orders that are pending approval
@@ -515,7 +529,8 @@ final class OrderController extends AbstractController
             if ($user instanceof Users) {
                 $logService->logUpdate($user, 'Order', $order->getId(), "Approved order #{$order->getId()}");
             }
-            
+            $customerNotifications->notifyOrderApproved($order);
+
             $this->addFlash('success', 'Order approved successfully! Stock has been deducted.');
         } else {
             $this->addFlash('error', 'Invalid security token. Please try again.');
@@ -526,7 +541,13 @@ final class OrderController extends AbstractController
 
     #[Route('/{id}/reject', name: 'app_order_reject', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function reject(Request $request, Orders $order, EntityManagerInterface $em, ActivityLogService $logService): Response
+    public function reject(
+        Request $request,
+        Orders $order,
+        EntityManagerInterface $em,
+        ActivityLogService $logService,
+        CustomerNotificationService $customerNotifications,
+    ): Response
     {
         // Prevent rejecting approved or completed orders
         if (in_array($order->getStatus(), ['approved', 'completed'])) {
@@ -549,7 +570,8 @@ final class OrderController extends AbstractController
             if ($user instanceof Users) {
                 $logService->logUpdate($user, 'Order', $order->getId(), "Rejected order #{$order->getId()}");
             }
-            
+            $customerNotifications->notifyOrderRejected($order);
+
             $this->addFlash('success', 'Order rejected successfully!');
         }
 
@@ -557,7 +579,13 @@ final class OrderController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'app_order_delete', methods: ['POST'])]
-    public function delete(Request $request, Orders $order, EntityManagerInterface $em, ActivityLogService $logService): Response
+    public function delete(
+        Request $request,
+        Orders $order,
+        EntityManagerInterface $em,
+        ActivityLogService $logService,
+        CustomerNotificationService $customerNotifications,
+    ): Response
     {
         // Only admins can delete orders
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -573,7 +601,9 @@ final class OrderController extends AbstractController
                 $this->restoreStock($order, $em);
                 $em->flush();
             }
-            
+
+            $customerNotifications->notifyOrderDeleted($order);
+
             $em->remove($order);
             $em->flush();
             $user = $this->getUser();
